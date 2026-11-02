@@ -1,3 +1,4 @@
+import DoyeonCharacter from "./DoyeonCharacter";
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -20,7 +21,7 @@ function Ball({
     </mesh>
   );
 }
-export default function Character({
+function OriginalCharacter({
   kind = "doyeon",
   moving = false,
   action = "idle",
@@ -250,5 +251,19 @@ export default function Character({
         </group>
       ))}
     </group>
+  );
+}
+
+// Keep the original NPC geometry and animation implementation unchanged.
+export default function Character(props: {
+  kind?: "doyeon" | "jae";
+  moving?: boolean;
+  action?: Action;
+  rings?: boolean;
+}) {
+  return props.kind === "jae" ? (
+    <OriginalCharacter {...props} />
+  ) : (
+    <DoyeonCharacter moving={props.moving} action={props.action} rings={props.rings} />
   );
 }

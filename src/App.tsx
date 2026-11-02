@@ -1,3 +1,4 @@
+import { ui, characters } from "./content/gameContent";
 import Typewriter from "./components/Typewriter";
 import Photo from "./components/Photo";
 import Joystick from "./components/Joystick";
@@ -10,9 +11,9 @@ import {
   letter,
   heartMessages,
   easterEgg,
-  type Spot,
-} from "./data/story";
-import { memories } from "./data/memories";
+} from "./content/gameContent";
+import type { Spot } from "./data/story";
+import { memories } from "./content/gameContent";
 class WorldBoundary extends Component<
   { children: ReactNode },
   { failed: boolean }
@@ -24,9 +25,9 @@ class WorldBoundary extends Component<
   render() {
     return this.state.failed ? (
       <div className="gpu-error">
-        3D 화면을 시작하지 못했어요.
+        {ui.text01}
         <br />
-        브라우저의 그래픽 가속을 켜고 다시 열어 주세요.
+        {ui.text02}
       </div>
     ) : (
       this.props.children
@@ -189,7 +190,7 @@ export default function App() {
       setPhoto(game.stage);
       setPhotoFinish(false);
     } else if (game.stage === 4) {
-      notify("우리의 마지막 추억 하트를 받아줘 ♡");
+      notify(ui.text03);
     }
   }
   function choose(i: number) {
@@ -219,38 +220,38 @@ export default function App() {
         />
       </WorldBoundary>
       <div className="grain" />
-      <div className="stage-transition" key={game.stage} />
+      <div className="stage-transition" key={`transition-${game.stage}`} />
       {!playing ? (
         <div className="title-screen">
-          <div className="title-note">재영이가 도연이에게</div>
+          <div className="title-note">{ui.text04}</div>
           <div className="title-heart">♡</div>
-          <p className="eyebrow">우리 둘의 작은 모험</p>
+          <p className="eyebrow">{ui.text05}</p>
           <h1>
-            도연아,
+            {ui.text06}
             <br />
-            <em>사랑해</em>
+            <em>{ui.text07}</em>
             <span>♡</span>
           </h1>
-          <p className="subtitle">도연아, 널 기다리는 사람이 있어.</p>
+          <p className="subtitle">{ui.text08}</p>
           <div className="title-divider">✦</div>
           <button className="primary" onClick={() => start()}>
-            {game.started ? "이어서 만나러 가기 ♡" : "만나러 가기 ♡"}
+            {game.started ? ui.text09 : ui.text10}
           </button>
           {game.started && (
             <button
               className="text-button"
               onClick={() => setConfirmReset(true)}
             >
-              처음부터 다시 걷기
+              {ui.text11}
             </button>
           )}
-          <small className="title-foot">다섯 번의 추억, 하나의 마음</small>
+          <small className="title-foot">{ui.text12}</small>
         </div>
       ) : (
         <>
           <header className="hud">
             <div>
-              <p className="eyebrow">도연아, 사랑해 ♡</p>
+              <p className="eyebrow">{ui.text13}</p>
               <h2>{stage.name}</h2>
               <span className="stage-sub">{stage.subtitle}</span>
             </div>
@@ -260,17 +261,19 @@ export default function App() {
                   audioStart(!game.muted);
                   game.toggleMute();
                 }}
-                aria-label={game.muted ? "소리 켜기" : "소리 끄기"}
+                aria-label={game.muted ? ui.text14 : ui.text15}
               >
-                {game.muted ? "♪ 꺼짐" : "♫ 켜짐"}
+                {game.muted ? ui.text16 : ui.text17}
               </button>
-              <button onClick={() => setPanel("menu")} aria-label="여행 메뉴">
+              <button onClick={() => setPanel("menu")} aria-label={ui.text18}>
                 ☰
               </button>
             </div>
           </header>
           <div className="progress">
-            <span>우리의 추억 ♡ {game.hearts.length}/5</span>
+            <span>
+              {ui.text19} {game.hearts.length}/5
+            </span>
             <div>
               {[0, 1, 2, 3, 4].map((i) => (
                 <span
@@ -286,12 +289,12 @@ export default function App() {
             <>
               <div className="objective">
                 {game.stage === 5
-                  ? "우리만의 밤을 즐겨 봐 ♡"
+                  ? ui.text20
                   : game.hearts.includes(game.stage)
-                    ? "추억을 간직했어 ♡"
+                    ? ui.text21
                     : ready
-                      ? "반짝이는 하트 가까이에서 받아줘 ♡"
-                      : "분홍빛 표식을 찾아 걸어가 봐 ♡"}
+                      ? ui.text22
+                      : ui.text23}
               </div>
               <div className="controls">
                 <Joystick />
@@ -311,19 +314,19 @@ export default function App() {
                       nearest.main &&
                       !game.hearts.includes(game.stage) &&
                       game.stage < 5
-                      ? "하트 받기"
+                      ? ui.text24
                       : nearest.label
-                    : "가까이 가기"}
-                  <small>이야기 · E</small>
+                    : ui.text25}
+                  <small>{ui.text26}</small>
                 </button>
               </div>
-              <p className="keyboard-hint">방향키 / WASD로 걷기 · E로 이야기</p>
+              <p className="keyboard-hint">{ui.text27}</p>
               {game.hearts.includes(game.stage) && game.stage < 4 && (
                 <button
                   className="next-stage primary"
                   onClick={() => visit(game.stage + 1)}
                 >
-                  다음 추억으로 →
+                  {ui.text28}
                 </button>
               )}
               {game.hearts.includes(4) && game.stage === 4 && (
@@ -331,7 +334,7 @@ export default function App() {
                   className="next-stage primary"
                   onClick={() => setPanel("letter")}
                 >
-                  재영이의 편지 읽기 ♡
+                  {ui.text29}
                 </button>
               )}
             </>
@@ -340,9 +343,9 @@ export default function App() {
             <div className="dialog-wrap">
               <div className="dialog-card">
                 <span className="eyebrow">
-                  {dialog.lines[dialog.at].startsWith("재영")
-                    ? "재영이의 마음"
-                    : "우리의 이야기"}
+                  {dialog.lines[dialog.at].startsWith(characters.jaeyeong)
+                    ? ui.text30
+                    : ui.text31}
                 </span>
                 <Typewriter
                   key={dialog.lines[dialog.at]}
@@ -352,7 +355,7 @@ export default function App() {
                 {choices ? (
                   <div className="choices">
                     {stage.choices!.map((c, i) => (
-                      <button key={c.text} onClick={() => choose(i)}>
+                      <button key={`choice-${i}`} onClick={() => choose(i)}>
                         {c.text}
                       </button>
                     ))}
@@ -360,8 +363,8 @@ export default function App() {
                 ) : (
                   <button className="dialog-next" onClick={next}>
                     {dialog.at < dialog.lines.length - 1
-                      ? "계속 듣기"
-                      : "좋아 ♡"}{" "}
+                      ? ui.text32
+                      : ui.text33}{" "}
                     <span>→</span>
                   </button>
                 )}
@@ -372,7 +375,7 @@ export default function App() {
       )}
       {photo !== null && (
         <Photo
-          key={photo}
+          key={`photo-${photo}`}
           index={photo}
           onClose={closePhoto}
           onFinish={photoFinish ? closePhoto : undefined}
@@ -384,15 +387,15 @@ export default function App() {
           <section className={"panel " + (panel === "letter" ? "letter" : "")}>
             <button
               className="close"
-              aria-label="닫기"
+              aria-label={ui.text34}
               onClick={() => setPanel(null)}
             >
               ×
             </button>
             {panel === "letter" ? (
               <>
-                <span className="eyebrow">너에게 닿기를</span>
-                <h2>내가 제일 사랑하는 너에게</h2>
+                <span className="eyebrow">{ui.text35}</span>
+                <h2>{ui.text36}</h2>
                 <div className="letter-body">
                   {letter.split("\n").map((line, i) => (
                     <div
@@ -407,32 +410,28 @@ export default function App() {
                   ))}
                 </div>
                 <button className="primary" onClick={() => setPanel("album")}>
-                  우리의 추억 다시 보기 ♡
+                  {ui.text37}
                 </button>
                 <button className="secret-door" onClick={() => visit(5)}>
-                  ⚿ 황금 열쇠 · 도연이만 입장 가능 ♡
-                  <small>
-                    어른인 우리 둘만의 다정한 비밀 · 선택해서 들어가기
-                  </small>
+                  {ui.text38}
+                  <small>{ui.text39}</small>
                 </button>
               </>
             ) : panel === "album" ? (
               <>
-                <span className="eyebrow">마음에 모아 둔 순간들</span>
-                <h2>우리의 추억 앨범</h2>
+                <span className="eyebrow">{ui.text40}</span>
+                <h2>{ui.text41}</h2>
                 <div className="album-grid">
                   {memories.slice(0, 5).map((m, i) => (
                     <button
-                      key={m.title}
+                      key={`memory-${i}`}
                       disabled={!game.album.includes(i)}
                       onClick={() => setPhoto(i)}
                     >
                       <span>{game.album.includes(i) ? "♡" : "🔒"}</span>
                       {m.title}
                       <small>
-                        {game.album.includes(i)
-                          ? "추억 펼치기"
-                          : "아직 만나지 않은 추억"}
+                        {game.album.includes(i) ? ui.text42 : ui.text43}
                       </small>
                     </button>
                   ))}
@@ -440,15 +439,15 @@ export default function App() {
               </>
             ) : (
               <>
-                <span className="eyebrow">잠깐 쉬어 가도 좋아</span>
-                <h2>우리의 여행</h2>
+                <span className="eyebrow">{ui.text44}</span>
+                <h2>{ui.text45}</h2>
                 <button className="primary" onClick={() => setPanel(null)}>
-                  계속 걸어가기
+                  {ui.text46}
                 </button>
                 <div className="stage-list">
                   {stages.map((s, i) => (
                     <button
-                      key={s.name}
+                      key={`stage-${i}`}
                       disabled={
                         i === 5
                           ? game.hearts.length < 5
@@ -463,15 +462,13 @@ export default function App() {
                   ))}
                 </div>
                 {game.hearts.length === 5 && (
-                  <button onClick={() => setPanel("album")}>
-                    추억 앨범 펼치기 ♡
-                  </button>
+                  <button onClick={() => setPanel("album")}>{ui.text47}</button>
                 )}
                 <button
                   className="text-button"
                   onClick={() => setConfirmReset(true)}
                 >
-                  처음부터 다시 걷기
+                  {ui.text11}
                 </button>
               </>
             )}
@@ -482,20 +479,20 @@ export default function App() {
         <div className="secret-ending">
           <span>♡</span>
           <h2>
-            그다음 이야기는
+            {ui.text48}
             <br />
-            우리 둘만 아는 걸로 ♡
+            {ui.text49}
           </h2>
           <button className="primary" onClick={() => visit(4)}>
-            우리의 추억으로 돌아가기
+            {ui.text50}
           </button>
         </div>
       )}
       {confirmReset && (
         <div className="veil">
           <section className="panel">
-            <h2>처음부터 다시 걸을까?</h2>
-            <p>모아 둔 하트와 추억 기록이 지워져.</p>
+            <h2>{ui.text51}</h2>
+            <p>{ui.text52}</p>
             <button
               className="primary"
               onClick={() => {
@@ -503,11 +500,9 @@ export default function App() {
                 start(true);
               }}
             >
-              응, 다시 만나러 가기 ♡
+              {ui.text53}
             </button>
-            <button onClick={() => setConfirmReset(false)}>
-              아니, 간직할래
-            </button>
+            <button onClick={() => setConfirmReset(false)}>{ui.text54}</button>
           </section>
         </div>
       )}

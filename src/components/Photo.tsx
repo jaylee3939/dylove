@@ -1,5 +1,6 @@
+import { ui } from "../content/gameContent";
 import { useState } from "react";
-import { memories } from "../data/memories";
+import { memories } from "../content/gameContent";
 export default function Photo({
   index,
   onClose,
@@ -16,7 +17,7 @@ export default function Photo({
   return (
     <div className="veil photo-veil">
       <section className="photo-modal">
-        <button className="close" onClick={onClose} aria-label="사진 닫기">
+        <button className="close" onClick={onClose} aria-label={ui.text55}>
           ×
         </button>
         <div className="polaroid">
@@ -26,18 +27,18 @@ export default function Photo({
             <div className="empty-photo">
               <span>♡</span>
               <p>
-                우리의 사진이
+                {ui.text56}
                 <br />
-                들어올 자리
+                {ui.text57}
               </p>
-              <small>이 순간을 오래오래</small>
+              <small>{ui.text58}</small>
             </div>
           )}
           <h2>{m.title}</h2>
           <p>{m.caption}</p>
         </div>
         <p className="eyebrow">
-          추억 한 장 · {page + 1} / {m.photos.length}
+          {ui.text59} {page + 1} / {m.photos.length}
         </p>
         {page < m.photos.length - 1 ? (
           <button
@@ -47,11 +48,11 @@ export default function Photo({
               setBroken(false);
             }}
           >
-            다음 추억 ♡
+            {ui.text60}
           </button>
         ) : (
           <button className="primary" onClick={onFinish ?? onClose}>
-            {onFinish ? "마음속에 간직하기 ♡" : "다시 걸어가기"}
+            {onFinish ? ui.text61 : ui.text62}
           </button>
         )}
       </section>

@@ -1,3 +1,4 @@
+import { ui } from "../content/gameContent";
 import { useState, useRef } from "react";
 import { controls } from "../systems/store";
 export default function Joystick() {
@@ -12,7 +13,7 @@ export default function Joystick() {
       className="joystick"
       ref={base}
       role="application"
-      aria-label="이동 조이스틱"
+      aria-label={ui.text63}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId);
         move(e);
@@ -28,7 +29,7 @@ export default function Joystick() {
         className="joystick-knob"
         style={{ transform: `translate(${knob.x}px,${knob.y}px)` }}
       />
-      <span>걷기</span>
+      <span>{ui.text64}</span>
     </div>
   );
   function move(e: React.PointerEvent) {

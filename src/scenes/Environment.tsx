@@ -1,3 +1,4 @@
+import { ui } from "../content/gameContent";
 import WorldLabel from "../components/WorldLabel";
 import { useGame } from "../systems/store";
 import { RoundedBox } from "@react-three/drei";
@@ -272,8 +273,8 @@ export default function Environment({
               ))}
             </group>
           ))}
-          <Sign p={[-2.85, 2.65, -3]} text="작은 커피집" />
-          <Sign p={[2.85, 2.65, -1.5]} text="오늘도, 너와" />
+          <Sign p={[-2.85, 2.65, -3]} text={ui.text65} />
+          <Sign p={[2.85, 2.65, -1.5]} text={ui.text66} />
           <Box p={[-3, 0.8, 1]} s={[0.8, 1.6, 0.65]} c="#ab6470" />
           {[0, 1, 2].map((i) => (
             <Box
@@ -321,7 +322,7 @@ export default function Environment({
       )}
       {stage === 1 && (
         <>
-          <Sign p={[0, 2.1, -6.05]} text="옥된장 · 따뜻한 한 끼" />
+          <Sign p={[0, 2.1, -6.05]} text={ui.text67} />
           <Table x={0} z={-4.7} />
           <Table x={-3} z={-1.5} />
           <Table x={3} z={1.5} />
@@ -338,7 +339,7 @@ export default function Environment({
       )}
       {stage === 2 && (
         <>
-          <Sign p={[0, 2.1, -6.05]} text="동대문 · 둘의 약속" />
+          <Sign p={[0, 2.1, -6.05]} text={ui.text68} />
           {[-3, 0, 3].map((x) => (
             <group key={x}>
               <Box p={[x, 0.65, -5.2]} s={[2.3, 1.3, 1.4]} c="#9f7e69" />
@@ -364,7 +365,7 @@ export default function Environment({
       )}
       {stage === 3 && (
         <>
-          <Sign p={[0, 2.1, -6.05]} text="잠깐 쉬어 가요 ☕" />
+          <Sign p={[0, 2.1, -6.05]} text={ui.text69} />
           <Box p={[-3, 0.55, -2]} s={[1.4, 1.1, 3]} c="#a99178" />
           <Box p={[-3, 1.45, -1]} s={[0.8, 0.75, 0.65]} c="#655d56" />
           <Box p={[-3, 1.43, -0.66]} s={[0.45, 0.35, 0.03]} c="#d8bd8e" />
@@ -409,7 +410,7 @@ export default function Environment({
       )}
       {stage === 5 && (
         <>
-          <Sign p={[0, 2.9, -6.05]} text="우리 둘만의 밤 ♡" />
+          <Sign p={[0, 2.9, -6.05]} text={ui.text70} />
           <Box p={[0, 0.35, -4.8]} s={[3.7, 0.7, 2.8]} c="#563743" />
           <Box p={[0, 0.8, -4.8]} s={[3.6, 0.3, 2.7]} c="#f2d6cc" />
           <Box p={[0, 1.03, -4.1]} s={[3.65, 0.15, 1.2]} c="#b15d75" />
@@ -449,7 +450,7 @@ export default function Environment({
           </group>
           <WorldLabel
             position={[0, 3, 0]}
-            text="도연이만 입장 가능 ♡"
+            text={ui.text71}
             className="secret-door world-door"
             onClick={onDoor}
           />

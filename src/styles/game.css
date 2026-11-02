@@ -808,3 +808,8 @@ h1 > span {
 .photo-veil {
   z-index: 15;
 }
+/* Story copy can contain intentional line breaks from the content editor. */
+.typed{white-space:pre-wrap}
+/* Keep the editor's deliberate newlines in published dialogue and photo copy. */
+.polaroid h2,.polaroid p,.choices button,.hud h2,.stage-sub,.objective,.title-screen .subtitle{white-space:pre-wrap}
+.world-sign,.bubble,.spot-label{white-space:pre}

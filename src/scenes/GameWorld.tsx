@@ -6,7 +6,7 @@ import * as THREE from "three";
 import Character from "../characters/Character";
 import Environment, { Heart } from "./Environment";
 import { controls, useGame } from "../systems/store";
-import { stages, reactionBubbles } from "../data/story";
+import { stages, reactionBubbles } from "../content/gameContent";
 import { tone } from "../systems/audio";
 function Actors({
   ready,

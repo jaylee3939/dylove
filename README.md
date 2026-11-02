@@ -2,6 +2,10 @@
 
 A personal, fully local 3D story adventure built with React, TypeScript, Vite, React Three Fiber, drei, Three.js, and Zustand. All player-facing text is Korean. No backend, paid API, personal voice recording, or third-party photograph is required.
 
+## Private visual story editor
+
+See [the Korean editor guide](EDITOR.ko.md). Run `npm run editor` locally to edit all six stages, common UI text, character names, captions, and the letter without TypeScript. Draft saves are separate from game progress. Export a complete JSON and send it to Codex for an intentional content update. The editor is excluded from production; existing Vercel hosting and URLs remain unchanged.
+
 ## Run
 
 Requires Node.js 22.18+ (tested with Node 24) and npm.
@@ -46,6 +50,8 @@ Multiple photos per memory are supported. Failed image loads fall back to an emp
 
 | File                           | Content                                                                                    |
 | ------------------------------ | ------------------------------------------------------------------------------------------ |
+| `src/content/gameContent.ts`   | Validated published copy merged onto unchanged game structure                              |
+| `src/content/published.json`   | Intentionally published text document, initially null                                      |
 | `src/data/story.ts`            | Stage names, destinations, dialogue, choices, actions, heart messages, exact ending letter |
 | `src/data/memories.ts`         | Album captions and photo paths                                                             |
 | `src/data/characters.ts`       | Shared editable character palette                                                          |

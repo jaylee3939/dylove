@@ -21,7 +21,7 @@ page.on("pageerror", (e) => errors.push(e.message));
 page.on("console", (m) => {
   if (m.type() === "error") errors.push(m.text());
 });
-await page.goto("http://localhost:5173");
+await page.goto(process.env.GAME_BASE_URL ?? "http://localhost:5173");
 await page.getByRole("button", { name: "만나러 가기 ♡", exact: true }).click();
 async function dismiss() {
   for (let i = 0; i < 5; i++) {

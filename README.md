@@ -72,4 +72,4 @@ For new locations, extend the stage/memory data and provide its environment artw
 
 ## Asset and license notes
 
-All character/environment shapes and audio in this repository are procedural original work. No generated personal photographs are used. Nanum Gothic is bundled through @fontsource/nanum-gothic (SIL Open Font License); no runtime font CDN is required. Three.js and npm dependencies retain their upstream licenses. A private personal gift may still be publicly reachable if deployed without hosting access protection.
+All character/environment shapes and audio in this repository are procedural original work. No generated personal photographs are used. Pretendard Variable is bundled through pretendard (SIL Open Font License); no runtime font CDN is required. Three.js and npm dependencies retain their upstream licenses. A private personal gift may still be publicly reachable if deployed without hosting access protection.

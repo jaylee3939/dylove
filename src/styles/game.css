@@ -1,5 +1,5 @@
 :root {
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   color: #674737;
   background: #fff4e8;
   font-synthesis: none;
@@ -88,7 +88,7 @@ canvas {
 .title-note {
   position: absolute;
   top: 35px;
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   letter-spacing: 2px;
   font-size: 13px;
 }
@@ -107,7 +107,7 @@ canvas {
   font-weight: 600;
 }
 h1 {
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   font-size: clamp(54px, 7.5vw, 108px);
   font-weight: 400;
   line-height: 1.2;
@@ -170,7 +170,7 @@ h1 > span {
   background: linear-gradient(#fff4e8df, transparent);
 }
 .hud h2 {
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   font-size: 26px;
   font-weight: 400;
   margin: 0 0 4px;
@@ -354,7 +354,7 @@ h1 > span {
   animation: appear 0.4s;
 }
 .typed {
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   font-size: 20px;
   line-height: 1.8;
   min-height: 62px;
@@ -418,7 +418,7 @@ h1 > span {
   touch-action: pan-y;
 }
 .panel h2 {
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   font-weight: 400;
   font-size: 26px;
   margin: 0 0 12px;
@@ -517,10 +517,10 @@ h1 > span {
 }
 .empty-photo > span {
   font-size: 55px;
-  font-family: "Nanum Gothic", sans-serif;
+  font-family: "Pretendard Variable", sans-serif;
 }
 .empty-photo p {
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   font-size: 19px;
   line-height: 1.7;
   margin: 8px;
@@ -530,7 +530,7 @@ h1 > span {
   letter-spacing: 3px;
 }
 .polaroid h2 {
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   font-size: 20px;
   font-weight: 400;
   margin: 20px 0 8px;
@@ -551,7 +551,7 @@ h1 > span {
 .letter-body {
   text-align: left;
   white-space: pre-wrap;
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   font-size: 15px;
   line-height: 1.9;
   padding: 10px 5px 28px;
@@ -606,7 +606,7 @@ h1 > span {
   font-size: 60px;
 }
 .secret-ending h2 {
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   font-weight: 400;
   line-height: 1.9;
   margin: 25px 0 50px;
@@ -758,7 +758,7 @@ h1 > span {
 }
 .world-sign {
   white-space: nowrap;
-  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
   font-size: 14px;
   color: #714d41;
   background: #fce9cd;

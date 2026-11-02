@@ -53,9 +53,15 @@
         "photos": [
           {
             "id": "tokyo-cfb77170-98db-4aac-aef2-58b5de504a6b",
-            "src": "/memories/editor-7de32669-5fe6-4f74-aeb9-4b2dc6ea8b2e.webp",
+            "src": "/memories/editor-efc52480-4e68-4daa-919d-6628851ee46c.webp",
             "title": "도쿄 무제한 하이볼",
             "caption": "취해도 예쁜 도연이랑 쪽쪽"
+          },
+          {
+            "id": "tokyo-51920a97-7048-4817-a15a-f93f1bd6f7d4",
+            "src": "/memories/editor-7760f51b-7c16-4872-a691-a5e4e5c2f923.webp",
+            "title": "귀여운 도쿄 자판기",
+            "caption": "도연이가 더 귀여워.. "
           }
         ]
       }

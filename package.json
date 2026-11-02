@@ -12,6 +12,7 @@
     "test:browser": "node tests/browser.mjs && node tests/touch.mjs && node tests/album.mjs"
   },
   "dependencies": {
+    "@fontsource/nanum-gothic": "^5.3.0",
     "@react-three/drei": "^10.7.0",
     "@react-three/fiber": "^9.3.0",
     "react": "^19.0.0",

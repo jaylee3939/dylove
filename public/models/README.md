@@ -1,0 +1,1 @@
+Optional future GLB/GLTF assets can be stored here. Replace the Character implementation while retaining its public props; no external model downloads are required by the current procedural characters.

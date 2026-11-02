@@ -1,0 +1,810 @@
+:root {
+  font-family: "Noto Sans KR", sans-serif;
+  color: #674737;
+  background: #fff4e8;
+  font-synthesis: none;
+  font-weight: 400;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+  touch-action: manipulation;
+  color: inherit;
+  background: #f9eddf;
+  border-radius: 14px;
+  padding: 14px 20px;
+  min-height: 46px;
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+button:hover {
+  background: #f4d9d8;
+}
+button:active {
+  transform: scale(0.97);
+}
+button:focus-visible {
+  outline: 3px solid #8e4058;
+  outline-offset: 3px;
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.game {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  touch-action: none;
+}
+.game > div:first-child {
+  position: absolute !important;
+  inset: 0;
+}
+canvas {
+  display: block;
+}
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 35%,
+    #67473718 100%
+  );
+}
+.title-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 7vw;
+  background: linear-gradient(
+    90deg,
+    #fff4e8f5,
+    #fff4e8df 35%,
+    #fff4e830 68%,
+    transparent
+  );
+}
+.title-note {
+  position: absolute;
+  top: 35px;
+  font-family: "Gowun Batang", serif;
+  letter-spacing: 2px;
+  font-size: 13px;
+}
+.title-heart {
+  font-size: 50px;
+  color: #b96f80;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0 0 13px;
+  color: #9c7564;
+  font-weight: 600;
+}
+h1 {
+  font-family: "Gowun Batang", serif;
+  font-size: clamp(54px, 7.5vw, 108px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -4px;
+  margin: 0;
+}
+h1 em {
+  font-style: normal;
+  color: #8e4058;
+}
+h1 > span {
+  font-size: 0.6em;
+  display: inline-block;
+  transform: rotate(-12deg);
+  margin-left: 14px;
+  color: #c38593;
+}
+.subtitle {
+  font-size: 14px;
+  line-height: 1.8;
+  margin-top: 24px;
+}
+.title-divider {
+  font-size: 18px;
+  color: #be9b76;
+  margin: 13px 0 22px;
+}
+.primary {
+  background: #8e4058;
+  color: #fff4e8;
+  padding: 16px 26px;
+  border-radius: 40px;
+  font-size: 14px;
+  box-shadow: 0 8px 25px #8e405820;
+}
+.primary:hover {
+  background: #a4536c;
+}
+.title-foot {
+  margin-top: 28px;
+  color: #a78674;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+.text-button {
+  background: transparent;
+  font-size: 12px;
+  color: #a87d70;
+  padding: 12px;
+}
+.hud {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: calc(25px + env(safe-area-inset-top)) 30px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: linear-gradient(#fff4e8df, transparent);
+}
+.hud h2 {
+  font-family: "Gowun Batang", serif;
+  font-size: 26px;
+  font-weight: 400;
+  margin: 0 0 4px;
+}
+.hud .eyebrow {
+  font-size: 9px;
+  margin-bottom: 9px;
+  letter-spacing: 2px;
+}
+.stage-sub {
+  font-size: 11px;
+  color: #8d7061;
+}
+.hud-actions {
+  display: flex;
+  gap: 8px;
+}
+.hud-actions button {
+  background: #fff4e8ce;
+  border: 1px solid #ffffff88;
+  font-size: 12px;
+  padding: 10px 14px;
+  border-radius: 50px;
+}
+.progress {
+  position: absolute;
+  right: 30px;
+  top: 135px;
+  text-align: right;
+  font-size: 11px;
+  background: #fff4e8cc;
+  padding: 13px 17px;
+  border-radius: 16px;
+}
+.progress div {
+  margin-top: 6px;
+  letter-spacing: 5px;
+  color: #c7b0a0;
+  font-size: 17px;
+}
+.progress .filled {
+  color: #a44f6c;
+}
+.objective {
+  position: absolute;
+  bottom: 210px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: #fff4e8db;
+  border: 1px solid #fff9;
+  padding: 11px 20px;
+  border-radius: 30px;
+  font-size: 11px;
+  box-shadow: 0 4px 20px #7955480d;
+}
+.controls {
+  position: absolute;
+  bottom: calc(45px + env(safe-area-inset-bottom));
+  left: 45px;
+  right: 45px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+.joystick {
+  width: 116px;
+  height: 116px;
+  border-radius: 50%;
+  background: #fff4e860;
+  border: 1px solid #fff4e8c0;
+  display: grid;
+  place-items: center;
+  position: relative;
+  pointer-events: auto;
+  touch-action: none;
+  box-shadow: inset 0 0 20px #7955480a;
+}
+.joystick-knob {
+  width: 49px;
+  height: 49px;
+  border-radius: 50%;
+  background: #fff4e8cc;
+  border: 1px solid white;
+  box-shadow: 0 3px 12px #79554820;
+}
+.joystick > span {
+  position: absolute;
+  bottom: -24px;
+  font-size: 10px;
+  color: #846454;
+}
+.interact {
+  pointer-events: auto;
+  background: #8e4058ed;
+  color: #fff4e8;
+  border: 1px solid #f5b8c8;
+  width: 113px;
+  height: 113px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  padding: 10px;
+  box-shadow: 0 6px 20px #8e405825;
+}
+.interact > span {
+  font-size: 27px;
+  line-height: 1.2;
+  margin-bottom: 7px;
+}
+.interact small {
+  font-size: 9px;
+  opacity: 0.6;
+  margin-top: 6px;
+}
+.interact.disabled {
+  background: #85675880;
+  opacity: 0.8;
+  border-color: #fff6;
+}
+.keyboard-hint {
+  position: absolute;
+  bottom: 15px;
+  text-align: center;
+  width: 100%;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #785a4c;
+}
+.spot-label {
+  font-size: 10px;
+  white-space: nowrap;
+  background: #fff4e8e8;
+  padding: 7px 10px;
+  border: 1px solid #fff8;
+  border-radius: 20px;
+  color: #986574;
+  pointer-events: none;
+}
+.spot-label.near {
+  background: #8e4058;
+  color: #fff4e8;
+}
+.bubble {
+  background: #fff4e8;
+  border-radius: 20px 20px 20px 2px;
+  padding: 12px 18px;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.next-stage {
+  position: absolute;
+  bottom: calc(60px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+}
+.next-stage:active {
+  transform: translateX(-50%) scale(0.97);
+}
+.dialog-wrap {
+  position: absolute;
+  bottom: calc(25px + env(safe-area-inset-bottom));
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: center;
+}
+.dialog-card {
+  width: 100%;
+  max-width: 600px;
+  background: #fff8eff5;
+  border: 1px solid #fff;
+  border-radius: 24px;
+  padding: 26px 30px 18px;
+  box-shadow: 0 14px 70px #67473730;
+  animation: appear 0.4s;
+}
+.typed {
+  font-family: "Gowun Batang", serif;
+  font-size: 20px;
+  line-height: 1.8;
+  min-height: 62px;
+  margin: 10px 0;
+  cursor: pointer;
+  word-break: keep-all;
+}
+.caret {
+  color: #c98b9a;
+}
+.dialog-next {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  font-size: 11px;
+  color: #9e6d76;
+  padding: 10px 0;
+}
+.dialog-next span {
+  font-size: 18px;
+}
+.choices {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 4px;
+}
+.choices button {
+  text-align: left;
+  border: 1px solid #e4c5bc;
+  background: #fff3e5;
+  font-size: 13px;
+}
+.veil {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #49312770;
+  backdrop-filter: blur(9px);
+  padding: 20px;
+  z-index: 10;
+  touch-action: pan-y;
+}
+.panel {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  max-height: 88dvh;
+  overflow: auto;
+  background: #fff4e8;
+  border: 1px solid #fff9;
+  border-radius: 28px;
+  padding: 40px 30px 25px;
+  box-shadow: 0 25px 90px #35201933;
+  animation: appear 0.4s;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  touch-action: pan-y;
+}
+.panel h2 {
+  font-family: "Gowun Batang", serif;
+  font-weight: 400;
+  font-size: 26px;
+  margin: 0 0 12px;
+}
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  font-size: 25px;
+  z-index: 2;
+  padding: 0;
+  width: 42px;
+  height: 42px;
+}
+.panel .eyebrow {
+  margin-bottom: 0;
+}
+.panel p {
+  font-size: 14px;
+}
+.stage-list {
+  display: grid;
+  gap: 7px;
+}
+.stage-list button {
+  display: flex;
+  text-align: left;
+  gap: 18px;
+  background: #f4e4d7;
+  font-size: 13px;
+}
+.stage-list span {
+  font-size: 11px;
+  color: #a98470;
+}
+.stage-list b {
+  margin-left: auto;
+  color: #a85c73;
+}
+.album-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.album-grid button {
+  background: #f4e5d5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+  gap: 10px;
+  min-height: 130px;
+}
+.album-grid span {
+  font-size: 32px;
+  color: #ad6d82;
+}
+.album-grid small {
+  font-size: 9px;
+}
+.photo-modal {
+  position: relative;
+  max-width: 390px;
+  width: 100%;
+  text-align: center;
+  padding: 28px 15px 10px;
+  animation: photo-in 0.5s;
+}
+.photo-modal > .close {
+  color: white;
+  top: -20px;
+  right: -10px;
+}
+.polaroid {
+  background: #fffaf2;
+  padding: 14px 14px 23px;
+  box-shadow: 0 15px 50px #34211840;
+  transform: rotate(-3deg);
+  margin-bottom: 30px;
+}
+.polaroid img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+.empty-photo {
+  height: 260px;
+  background: linear-gradient(135deg, #e6c6b6, #edddd0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ac8276;
+  border: 1px solid #d7bcaa;
+}
+.empty-photo > span {
+  font-size: 55px;
+  font-family: serif;
+}
+.empty-photo p {
+  font-family: "Gowun Batang", serif;
+  font-size: 19px;
+  line-height: 1.7;
+  margin: 8px;
+}
+.empty-photo small {
+  font-size: 9px;
+  letter-spacing: 3px;
+}
+.polaroid h2 {
+  font-family: "Gowun Batang", serif;
+  font-size: 20px;
+  font-weight: 400;
+  margin: 20px 0 8px;
+}
+.polaroid p {
+  font-size: 10px;
+}
+.photo-modal > .eyebrow {
+  color: #fff1de;
+  font-size: 10px;
+}
+.letter {
+  text-align: center;
+}
+.letter h2 {
+  font-size: 22px;
+}
+.letter-body {
+  text-align: left;
+  white-space: pre-wrap;
+  font-family: "Gowun Batang", serif;
+  font-size: 15px;
+  line-height: 1.9;
+  padding: 10px 5px 28px;
+}
+.slow-line {
+  animation: reveal 1.5s both;
+  color: #8e4058;
+  font-weight: 700;
+}
+.secret-door {
+  border: 1px solid #cba764;
+  background: #f4e4c9;
+  color: #8b6943;
+  font-size: 12px;
+}
+.secret-door small {
+  display: block;
+  font-size: 9px;
+  margin-top: 8px;
+  line-height: 1.8;
+}
+.toast {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: #fff4e8f0;
+  color: #8e4058;
+  border-radius: 40px;
+  padding: 18px 25px;
+  font-size: 13px;
+  box-shadow: 0 10px 45px #79554830;
+  z-index: 20;
+  animation: appear 0.4s;
+}
+.secret-ending {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  background: #21151f;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #f4c3d1;
+  text-align: center;
+  padding: 25px;
+  animation: reveal 3s;
+}
+.secret-ending > span {
+  font-size: 60px;
+}
+.secret-ending h2 {
+  font-family: "Gowun Batang", serif;
+  font-weight: 400;
+  line-height: 1.9;
+  margin: 25px 0 50px;
+  font-size: 24px;
+}
+.gpu-error {
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #ead2c3;
+}
+.dim canvas {
+  filter: brightness(0.65);
+  transition: filter 2s;
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes photo-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85) rotate(5deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (max-width: 600px) {
+  .title-screen {
+    justify-content: flex-start;
+    padding: 25dvh 30px 20px;
+    background: linear-gradient(90deg, #fff4e8ee, #fff4e8ab 65%, #fff4e825);
+  }
+  .title-heart {
+    display: none;
+  }
+  h1 {
+    font-size: 68px;
+  }
+  .subtitle {
+    font-size: 12px;
+    margin-top: 20px;
+  }
+  .title-note {
+    top: calc(27px + env(safe-area-inset-top));
+  }
+  .title-divider {
+    margin: 8px 0 20px;
+  }
+  .title-foot {
+    font-size: 9px;
+  }
+  .hud {
+    padding: calc(20px + env(safe-area-inset-top)) 20px 20px;
+  }
+  .hud h2 {
+    font-size: 23px;
+  }
+  .hud-actions {
+    gap: 5px;
+  }
+  .hud-actions button {
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+  .progress {
+    right: 20px;
+    top: calc(122px + env(safe-area-inset-top));
+    padding: 10px 13px;
+    font-size: 10px;
+  }
+  .controls {
+    left: 24px;
+    right: 24px;
+    bottom: calc(43px + env(safe-area-inset-bottom));
+  }
+  .joystick {
+    width: 100px;
+    height: 100px;
+  }
+  .interact {
+    width: 100px;
+    height: 100px;
+    font-size: 10px;
+  }
+  .keyboard-hint {
+    display: none;
+  }
+  .objective {
+    bottom: calc(180px + env(safe-area-inset-bottom));
+    font-size: 10px;
+    padding: 10px 15px;
+  }
+  .dialog-card {
+    padding: 22px 23px 15px;
+  }
+  .typed {
+    font-size: 18px;
+  }
+  .dialog-wrap {
+    left: 14px;
+    right: 14px;
+    bottom: calc(15px + env(safe-area-inset-bottom));
+  }
+  .next-stage {
+    bottom: calc(155px + env(safe-area-inset-bottom));
+    white-space: nowrap;
+    font-size: 11px;
+  }
+  .panel {
+    padding: 40px 24px 24px;
+    max-height: 88dvh;
+  }
+  .letter-body {
+    font-size: 14px;
+  }
+  .polaroid img {
+    height: 240px;
+  }
+  .empty-photo {
+    height: 240px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *:before,
+  *:after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+.world-sign {
+  white-space: nowrap;
+  font-family: "Gowun Batang", serif;
+  font-size: 14px;
+  color: #714d41;
+  background: #fce9cd;
+  border: 3px double #b28b6f;
+  padding: 9px 18px;
+  box-shadow: 0 3px 9px #79554820;
+  pointer-events: none;
+}
+.hud,
+.progress,
+.objective,
+.controls,
+.keyboard-hint,
+.next-stage,
+.dialog-wrap {
+  z-index: 4;
+}
+.title-screen {
+  z-index: 5;
+}
+.world-door {
+  white-space: nowrap;
+  font-size: 10px;
+  padding: 10px 14px;
+  min-height: 40px;
+}
+.letter .slow-line {
+  animation-duration: 1.8s;
+}
+.stage-transition {
+  position: absolute;
+  inset: 0;
+  background: #fff4e8;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  animation: stage-fade 1s ease-out both;
+}
+@keyframes stage-fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.photo-veil {
+  z-index: 15;
+}

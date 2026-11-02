@@ -1,0 +1,59 @@
+.polaroid {
+  color: #674737;
+  text-align: center;
+  background: #fffaf2;
+  padding: 14px 14px 23px;
+  box-shadow: 0 15px 50px #34211840;
+  transform: rotate(-3deg);
+  margin-bottom: 30px;
+}
+.polaroid img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+.empty-photo {
+  height: 260px;
+  background: linear-gradient(135deg, #e6c6b6, #edddd0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ac8276;
+  border: 1px solid #d7bcaa;
+}
+.empty-photo > span {
+  font-size: 55px;
+  font-family: "Pretendard Variable", sans-serif;
+}
+.empty-photo p {
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
+  font-size: 19px;
+  line-height: 1.7;
+  margin: 8px;
+}
+.empty-photo small {
+  font-size: 9px;
+  letter-spacing: 3px;
+}
+.polaroid h2 {
+  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  margin: 20px 0 8px;
+}
+.polaroid p {
+  font-size: 10px;
+}
+
+.polaroid h2,
+.polaroid p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .polaroid img,
+  .empty-photo {
+    height: 240px;
+  }
+}

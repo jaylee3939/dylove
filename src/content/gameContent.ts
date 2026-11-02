@@ -29,11 +29,28 @@ export const stages: Stage[] = originalStages.map((stage, i) => {
       : {}),
   };
 });
-export const memories = content.stages.map((s) => ({
-  ...s.memory,
-  title: names(s.memory.title),
-  caption: names(s.memory.caption),
-}));
+export const memories = content.stages.map((s) => {
+  const photos = s.memory.photos.length
+    ? s.memory.photos
+    : [
+        {
+          id: `${s.id}-empty`,
+          src: null,
+          title: s.memory.title,
+          caption: s.memory.caption,
+        },
+      ];
+  return {
+    ...s.memory,
+    title: names(s.memory.title),
+    caption: names(s.memory.caption),
+    photos: photos.map((p) => p.src),
+    photoDetails: photos.map((p) => ({
+      title: names(p.src ? p.title : s.memory.title),
+      caption: names(p.src ? p.caption : s.memory.caption),
+    })),
+  };
+});
 export const ui = Object.fromEntries(
   Object.entries(content.ui).map(([key, value]) => [key, names(value)]),
 ) as typeof content.ui;

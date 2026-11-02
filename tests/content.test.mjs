@@ -20,7 +20,10 @@ test("all existing story and memories load without content loss", () => {
   content.stages.forEach((s, i) => {
     assert.equal(s.name, stages[i].name);
     assert.deepEqual(s.intro, stages[i].intro);
-    assert.deepEqual(s.memory, memories[i]);
+    assert.deepEqual(
+      { ...s.memory, photos: s.memory.photos.map((p) => p.src) },
+      memories[i],
+    );
     assert.deepEqual(
       s.spots,
       stages[i].spots.map(({ id, label, lines }) => ({ id, label, lines })),
@@ -62,6 +65,62 @@ test("reject malformed imports, missing stages, identifiers and extra fields", (
 test("dialogue and photo lists can grow without losing untouched content", () => {
   const c = cloneContent();
   c.stages[0].spots[0].lines.push("다음 대사 ♡");
-  c.stages[4].memory.photos = ["/memories/garden.jpg"];
+  c.stages[4].memory.photos = [
+    {
+      id: "garden-new",
+      src: "/memories/garden.jpg",
+      title: "새 추억",
+      caption: "사진 설명 ♡",
+    },
+  ];
   assert.deepEqual(validateContent(c), c);
+});
+
+test("version 1 documents migrate without losing any copy or photo paths", () => {
+  const v1 = cloneContent();
+  v1.version = 1;
+  delete v1.ui.text72;
+  v1.stages.forEach(
+    (s) => (s.memory.photos = s.memory.photos.map((p) => p.src)),
+  );
+  v1.stages[0].memory.photos = ["/memories/tokyo.jpg"];
+  v1.stages[1].choices[0].text = "남겨둔 수정 ♡";
+  const result = validateContent(v1);
+  assert.equal(result.version, 2);
+  assert.equal(result.ui.text72, defaultContent.ui.text72);
+  assert.equal(result.stages[0].memory.photos[0].src, "/memories/tokyo.jpg");
+  assert.equal(
+    result.stages[0].memory.photos[0].title,
+    v1.stages[0].memory.title,
+  );
+  assert.equal(result.stages[1].choices[0].text, "남겨둔 수정 ♡");
+  assert.equal(result.letter, v1.letter);
+});
+test("per-photo captions, ordering, deletion and identifiers are validated", () => {
+  const c = cloneContent();
+  c.stages[0].memory.photos = [
+    {
+      id: "photo-a",
+      src: "/memories/a.webp",
+      title: "사진 제목 ♡",
+      caption: "첫 줄\n둘째 줄",
+    },
+  ];
+  assert.deepEqual(validateContent(c), c);
+  c.stages[0].memory.photos = [];
+  assert.deepEqual(validateContent(c), c);
+  for (const src of [
+    "/memories/../outside.jpg",
+    "https://example.com/a.jpg",
+    "data:image/png;base64,a",
+    "/memories/a%2fb.jpg",
+  ]) {
+    const x = cloneContent();
+    x.stages[0].memory.photos[0].src = src;
+    assert.throws(() => validateContent(x));
+  }
+  const duplicate = cloneContent();
+  duplicate.stages[1].memory.photos[0].id =
+    duplicate.stages[0].memory.photos[0].id;
+  assert.throws(() => validateContent(duplicate));
 });

@@ -321,6 +321,14 @@ export default function App() {
                 </button>
               </div>
               <p className="keyboard-hint">{ui.text27}</p>
+              {game.stage === 5 && memories[5].photos.some(Boolean) && (
+                <button
+                  className="next-stage primary"
+                  onClick={() => setPhoto(5)}
+                >
+                  {ui.text72}
+                </button>
+              )}
               {game.hearts.includes(game.stage) && game.stage < 4 && (
                 <button
                   className="next-stage primary"

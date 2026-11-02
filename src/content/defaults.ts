@@ -24,7 +24,7 @@ export const stageLabels = [
   "러브이즈호텔",
 ];
 export const defaultContent = {
-  version: 1,
+  version: 2,
   characters: { doyeon: "도연", jaeyeong: "재영" },
   stages: stages.map((stage, i) => ({
     id: stageIds[i],
@@ -40,7 +40,15 @@ export const defaultContent = {
       text: c.text,
       reply: c.reply,
     })),
-    memory: { ...memories[i], photos: [...memories[i].photos] },
+    memory: {
+      ...memories[i],
+      photos: memories[i].photos.map((src, index) => ({
+        id: `${stageIds[i]}-photo-${index}`,
+        src,
+        title: memories[i].title,
+        caption: memories[i].caption,
+      })),
+    },
   })),
   ui: { ...defaultUI },
   letter,
@@ -49,6 +57,7 @@ export const defaultContent = {
   reactionBubbles: { ...reactionBubbles },
 };
 export type Content = typeof defaultContent;
+export type MemoryPhoto = Content["stages"][number]["memory"]["photos"][number];
 export const cloneContent = (): Content =>
   JSON.parse(JSON.stringify(defaultContent));
 export function resolveNames(text: string, names: Content["characters"]) {

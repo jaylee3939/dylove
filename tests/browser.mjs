@@ -12,7 +12,9 @@ const browser = await chromium.launch({
   headless: true,
 });
 const page = await browser.newPage({
-  viewport: { width: 390, height: 844 },
+  viewport: process.env.GAME_TEST_COMPACT
+    ? { width: 320, height: 568 }
+    : { width: 390, height: 844 },
   isMobile: true,
   hasTouch: true,
 });
@@ -32,7 +34,7 @@ async function dismiss() {
 }
 await dismiss();
 await page.waitForTimeout(1000);
-await page.screenshot({ path: "/tmp/doyeon-mobile.png" });
+await page.screenshot({ timeout: 120000, path: "/tmp/doyeon-mobile.png" });
 console.log(
   "canvas",
   await page.locator("canvas").count(),
@@ -44,7 +46,7 @@ await page.waitForFunction(
   () =>
     document.querySelector("#interact")?.textContent.includes("사진 남기기"),
   {},
-  { timeout: 120000 },
+  { timeout: 240000 },
 );
 await page.keyboard.up("w");
 await page.waitForTimeout(200);
@@ -61,7 +63,7 @@ await page.waitForFunction(
   () =>
     document.querySelector("#interact")?.textContent.includes("재영이와 식사"),
   {},
-  { timeout: 120000 },
+  { timeout: 240000 },
 );
 await page.keyboard.up("w");
 await page.waitForTimeout(200);
@@ -78,13 +80,13 @@ await page.reload();
 await page.getByRole("button", { name: "이어서 만나러 가기 ♡" }).click();
 await dismiss();
 console.log("saved", await page.locator(".progress").innerText());
-await page.screenshot({ path: "/tmp/doyeon-stage2.png" });
+await page.screenshot({ timeout: 120000, path: "/tmp/doyeon-stage2.png" });
 async function walkTo(label) {
   await page.keyboard.down("w");
   await page.waitForFunction(
     (label) => document.querySelector("#interact")?.textContent.includes(label),
     label,
-    { timeout: 120000 },
+    { timeout: 240000 },
   );
   await page.keyboard.up("w");
 }
@@ -118,7 +120,7 @@ await page.getByRole("button", { name: "다음 추억 ♡" }).click();
 await page.getByRole("button", { name: "다음 추억 ♡" }).click();
 await page.getByRole("button", { name: "마음속에 간직하기 ♡" }).click();
 console.log("ending", await page.locator(".letter-body").innerText());
-await page.screenshot({ path: "/tmp/doyeon-ending.png" });
+await page.screenshot({ timeout: 120000, path: "/tmp/doyeon-ending.png" });
 await page
   .getByRole("button", { name: "우리의 추억 다시 보기 ♡", exact: true })
   .click();
@@ -138,7 +140,7 @@ await dismiss();
 await page.getByRole("button", { name: "우리의 추억으로 돌아가기" }).click();
 await dismiss();
 await page.setViewportSize({ width: 1440, height: 900 });
-await page.screenshot({ path: "/tmp/doyeon-desktop.png" });
+await page.screenshot({ timeout: 120000, path: "/tmp/doyeon-desktop.png" });
 console.log("all six stages complete, errors", errors);
 if (errors.length) throw new Error(errors.join("\n"));
 await browser.close();

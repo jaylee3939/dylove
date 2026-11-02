@@ -1,3 +1,5 @@
+import PhotoManager from "./photos/PhotoManager";
+import { exportPhotoBundle, importPhotoBundle } from "./photos/bundles";
 import { useEffect, useRef, useState } from "react";
 import {
   cloneContent,
@@ -59,20 +61,23 @@ export default function Editor() {
     [dialog, setDialog] = useState<"reset" | null>(null),
     [focus, setFocus] = useState(""),
     [previewSpot, setPreviewSpot] = useState(0),
-    [search, setSearch] = useState("");
+    [search, setSearch] = useState(""),
+    [photoMode, setPhotoMode] = useState(false),
+    [busy, setBusy] = useState(false);
   const file = useRef<HTMLInputElement>(null);
   const dirty = JSON.stringify(draft) !== saved;
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
-      if (dirty) {
+      if (dirty || busy) {
         e.preventDefault();
         e.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
-  }, [dirty]);
+  }, [dirty, busy]);
   function save() {
+    if (busy) return;
     try {
       const checked = validateContent(draft);
       localStorage.setItem(DRAFT_KEY, JSON.stringify(checked));
@@ -130,14 +135,50 @@ export default function Editor() {
       anchor.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       setMessage(
-        "여섯 장소와 편지를 한 파일로 내보냈어요. 이 파일을 Codex 채팅에 첨부해 주세요.",
+        "대사와 사진 연결을 JSON으로 내보냈어요. 사진 파일까지 포함하려면 사진·이야기 ZIP 내보내기를 눌러 주세요.",
       );
     } catch (error) {
       setMessage(`내보내지 못했어요. ${(error as Error).message}`);
     }
   }
-  async function importJSON(input: File) {
+  async function exportZIP() {
+    if (busy) return;
+    setBusy(true);
     try {
+      const bytes = await exportPhotoBundle(validateContent(draft));
+      const blob = new Blob([new Uint8Array(bytes).buffer], {
+          type: "application/zip",
+        }),
+        url = URL.createObjectURL(blob),
+        anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `doyeon-memories-${new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(new Date())}.zip`;
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setMessage(
+        "사진과 여섯 장소의 모든 편집 내용을 ZIP 한 개로 내보냈어요. 이 파일을 Codex 채팅에 첨부해 주세요. 공개 서버로 전송하지 않았어요.",
+      );
+    } catch (error) {
+      setMessage(`ZIP으로 내보내지 못했어요. ${(error as Error).message}`);
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function importJSON(input: File) {
+    if (busy) return;
+    setBusy(true);
+    try {
+      if (/\.zip$/i.test(input.name)) {
+        const checked = await importPhotoBundle(input);
+        setDraft(checked);
+        setFocus("");
+        setMessage(
+          "사진과 모든 대사·편지를 ZIP에서 가져왔어요. 확인 후 저장해 주세요. 공개 게임은 그대로예요.",
+        );
+        return;
+      }
       if (input.size > 2_000_000) throw Error("파일은 2MB 이하여야 해요.");
       const checked = validateContent(JSON.parse(await input.text()));
       setDraft(checked);
@@ -150,6 +191,7 @@ export default function Editor() {
         `가져오지 못했어요. 기존 내용은 그대로예요. ${error instanceof SyntaxError ? "JSON 파일 형식이 올바르지 않아요." : (error as Error).message}`,
       );
     } finally {
+      setBusy(false);
       if (file.current) file.current.value = "";
     }
   }
@@ -171,6 +213,7 @@ export default function Editor() {
           {stageLabels.map((label, i) => (
             <button
               key={label}
+              disabled={busy}
               className={selected === i ? "active" : ""}
               onClick={() => {
                 setSelected(i);
@@ -186,18 +229,42 @@ export default function Editor() {
         </nav>
         <div className="ed-nav-divider" />
         <button
+          disabled={busy}
+          className={"ed-extra " + (photoMode ? "active" : "")}
+          onClick={() => {
+            if (typeof selected !== "number") setSelected(0);
+            setPhotoMode(true);
+            setFocus("");
+          }}
+        >
+          ▧ 추억 사진 관리
+        </button>
+        {photoMode && (
+          <button
+            disabled={busy}
+            className="ed-extra"
+            onClick={() => setPhotoMode(false)}
+          >
+            ← 이야기 편집으로
+          </button>
+        )}
+        <button
+          disabled={busy}
           className={"ed-extra " + (selected === "shared" ? "active" : "")}
           onClick={() => {
             setSelected("shared");
+            setPhotoMode(false);
             setFocus("");
           }}
         >
           ✦ 이름과 공통 문구
         </button>
         <button
+          disabled={busy}
           className={"ed-extra " + (selected === "letter" ? "active" : "")}
           onClick={() => {
             setSelected("letter");
+            setPhotoMode(false);
             setFocus("");
           }}
         >
@@ -220,16 +287,29 @@ export default function Editor() {
             <small>공개 게임에 자동 반영되지 않아요</small>
           </div>
           <div className="ed-actions">
-            <button onClick={() => setDialog("reset")}>초기화</button>
-            <button onClick={() => file.current?.click()}>가져오기</button>
-            <button onClick={save}>저장</button>
-            <button className="ed-primary" onClick={exportJSON}>
+            <button disabled={busy} onClick={() => setDialog("reset")}>
+              초기화
+            </button>
+            <button disabled={busy} onClick={() => file.current?.click()}>
+              가져오기
+            </button>
+            <button disabled={busy} onClick={save}>
+              저장
+            </button>
+            <button disabled={busy} onClick={exportJSON}>
               JSON 내보내기 ↗
+            </button>
+            <button
+              disabled={busy}
+              className="ed-primary"
+              onClick={() => void exportZIP()}
+            >
+              {busy ? "사진을 준비하는 중…" : "사진·이야기 ZIP 내보내기"}
             </button>
             <input
               ref={file}
               type="file"
-              accept=".json,application/json"
+              accept=".json,.zip,application/json,application/zip"
               aria-label="JSON 파일 가져오기"
               hidden
               onChange={(e) => {
@@ -250,146 +330,180 @@ export default function Editor() {
           <span className="ed-eyebrow">작은 문장이 큰 마음이 되도록</span>
           <h1>
             {stage
-              ? stageLabels[selected as number]
+              ? stageLabels[selected as number] +
+                (photoMode ? " · 추억 사진 관리" : "")
               : selected === "letter"
                 ? "마지막 사랑 편지"
                 : "이름과 공통 문구"}
           </h1>
           <p>글을 누르고 고쳐 보세요. 오른쪽 미리보기에 바로 보여요.</p>
         </div>
-        <div className="ed-columns">
-          <section className="ed-fields" aria-label="내용 편집">
-            {stage && typeof selected === "number" && (
-              <>
-                <article className="ed-card">
-                  <h2>
-                    장소의 첫인상 <span>01</span>
-                  </h2>
-                  {field("장소 제목", ["stages", selected, "name"], stage.name)}
-                  {field(
-                    "짧은 소개",
-                    ["stages", selected, "subtitle"],
-                    stage.subtitle,
-                  )}
-                  <h3>처음 도착했을 때</h3>
-                  {stage.intro.map((line, i) =>
-                    field(
-                      `안내 문구 ${i + 1}`,
-                      ["stages", selected, "intro", i],
-                      line,
-                    ),
-                  )}
-                </article>
-                {stage.spots.map((spot, i) => (
-                  <article className="ed-card" key={spot.id}>
+        <div className={"ed-columns " + (photoMode ? "ed-photo-columns" : "")}>
+          <fieldset
+            disabled={busy}
+            className="ed-fields"
+            aria-label="내용 편집"
+          >
+            {stage &&
+              typeof selected === "number" &&
+              (photoMode ? (
+                <PhotoManager
+                  key={stage.id}
+                  stage={stage.id}
+                  photos={stage.memory.photos}
+                  title={stage.memory.title}
+                  caption={stage.memory.caption}
+                  ui={draft.ui}
+                  characters={draft.characters}
+                  onChange={(photos) =>
+                    edit(["stages", selected, "memory", "photos"], photos)
+                  }
+                  onNotice={setMessage}
+                  onBusy={setBusy}
+                />
+              ) : (
+                <>
+                  <article className="ed-card">
                     <h2>
-                      {defaultContent.stages[selected].spots[i].label}
-                      <span>{i === previewSpot ? "미리보는 중" : ""}</span>
+                      장소의 첫인상 <span>01</span>
                     </h2>
-                    <button
-                      className="ed-link"
-                      onClick={() => setPreviewSpot(i)}
-                    >
-                      이 장면 미리보기 →
-                    </button>
                     {field(
-                      "상호작용 이름",
-                      ["stages", selected, "spots", i, "label"],
-                      spot.label,
+                      "장소 제목",
+                      ["stages", selected, "name"],
+                      stage.name,
                     )}
-                    {spot.lines.map((line, j) =>
+                    {field(
+                      "짧은 소개",
+                      ["stages", selected, "subtitle"],
+                      stage.subtitle,
+                    )}
+                    <h3>처음 도착했을 때</h3>
+                    {stage.intro.map((line, i) =>
                       field(
-                        `대사 ${j + 1}`,
-                        ["stages", selected, "spots", i, "lines", j],
+                        `안내 문구 ${i + 1}`,
+                        ["stages", selected, "intro", i],
                         line,
                       ),
                     )}
-                    <div className="ed-inline">
+                  </article>
+                  {stage.spots.map((spot, i) => (
+                    <article className="ed-card" key={spot.id}>
+                      <h2>
+                        {defaultContent.stages[selected].spots[i].label}
+                        <span>{i === previewSpot ? "미리보는 중" : ""}</span>
+                      </h2>
                       <button
-                        onClick={() =>
-                          edit(
-                            ["stages", selected, "spots", i, "lines"],
-                            [...spot.lines, ""],
-                          )
-                        }
+                        className="ed-link"
+                        onClick={() => setPreviewSpot(i)}
                       >
-                        ＋ 대사 추가
+                        이 장면 미리보기 →
                       </button>
-                      {spot.lines.length > 1 && (
+                      {field(
+                        "상호작용 이름",
+                        ["stages", selected, "spots", i, "label"],
+                        spot.label,
+                      )}
+                      {spot.lines.map((line, j) =>
+                        field(
+                          `대사 ${j + 1}`,
+                          ["stages", selected, "spots", i, "lines", j],
+                          line,
+                        ),
+                      )}
+                      <div className="ed-inline">
                         <button
                           onClick={() =>
                             edit(
                               ["stages", selected, "spots", i, "lines"],
-                              spot.lines.slice(0, -1),
+                              [...spot.lines, ""],
                             )
                           }
                         >
-                          마지막 대사 삭제
+                          ＋ 대사 추가
                         </button>
-                      )}
-                    </div>
-                  </article>
-                ))}
-                {stage.choices.length > 0 && (
-                  <article className="ed-card">
-                    <h2>
-                      선택과 대답 <span>♡</span>
-                    </h2>
-                    <p>기존 캐릭터 동작은 그대로 유지돼요.</p>
-                    {stage.choices.map((choice, i) => (
-                      <div className="ed-choice-fields" key={i}>
-                        <h3>선택 {i + 1}</h3>
-                        {field(
-                          "선택지 문구",
-                          ["stages", selected, "choices", i, "text"],
-                          choice.text,
-                        )}
-                        {field(
-                          "재영이의 대답",
-                          ["stages", selected, "choices", i, "reply"],
-                          choice.reply,
+                        {spot.lines.length > 1 && (
+                          <button
+                            onClick={() =>
+                              edit(
+                                ["stages", selected, "spots", i, "lines"],
+                                spot.lines.slice(0, -1),
+                              )
+                            }
+                          >
+                            마지막 대사 삭제
+                          </button>
                         )}
                       </div>
-                    ))}
-                  </article>
-                )}
-                <article className="ed-card">
-                  <h2>
-                    폴라로이드 속 추억 <span>✧</span>
-                  </h2>
-                  {field(
-                    "사진 제목",
-                    ["stages", selected, "memory", "title"],
-                    stage.memory.title,
+                    </article>
+                  ))}
+                  {stage.choices.length > 0 && (
+                    <article className="ed-card">
+                      <h2>
+                        선택과 대답 <span>♡</span>
+                      </h2>
+                      <p>기존 캐릭터 동작은 그대로 유지돼요.</p>
+                      {stage.choices.map((choice, i) => (
+                        <div className="ed-choice-fields" key={i}>
+                          <h3>선택 {i + 1}</h3>
+                          {field(
+                            "선택지 문구",
+                            ["stages", selected, "choices", i, "text"],
+                            choice.text,
+                          )}
+                          {field(
+                            "재영이의 대답",
+                            ["stages", selected, "choices", i, "reply"],
+                            choice.reply,
+                          )}
+                        </div>
+                      ))}
+                    </article>
                   )}
-                  {field(
-                    "사진 아래 설명",
-                    ["stages", selected, "memory", "caption"],
-                    stage.memory.caption,
-                  )}
-                  <p>
-                    기존 사진 {stage.memory.photos.length}장의 연결은 내보낼
-                    때도 유지돼요.
-                  </p>
-                </article>
-                {selected < 5 && (
                   <article className="ed-card">
-                    <h2>하트를 받았을 때</h2>
+                    <h2>
+                      폴라로이드 속 추억 <span>✧</span>
+                    </h2>
                     {field(
-                      "하트 획득 문구",
-                      ["heartMessages", selected],
-                      draft.heartMessages[selected],
+                      "사진 제목",
+                      ["stages", selected, "memory", "title"],
+                      stage.memory.title,
                     )}
+                    {field(
+                      "사진 아래 설명",
+                      ["stages", selected, "memory", "caption"],
+                      stage.memory.caption,
+                    )}
+                    <p>
+                      사진 {stage.memory.photos.filter((p) => p.src).length}장의
+                      연결은 그대로 유지돼요.
+                    </p>
                   </article>
-                )}
-                {selected === 3 && (
-                  <article className="ed-card">
-                    <h2>커피 머신의 비밀</h2>
-                    {field("숨겨진 대사", ["easterEgg"], draft.easterEgg)}
-                  </article>
-                )}
-              </>
-            )}
+                  <button
+                    onClick={() => {
+                      setPhotoMode(true);
+                      setFocus("");
+                    }}
+                  >
+                    ▧ 추억 사진 관리 열기
+                  </button>
+                  {selected < 5 && (
+                    <article className="ed-card">
+                      <h2>하트를 받았을 때</h2>
+                      {field(
+                        "하트 획득 문구",
+                        ["heartMessages", selected],
+                        draft.heartMessages[selected],
+                      )}
+                    </article>
+                  )}
+                  {selected === 3 && (
+                    <article className="ed-card">
+                      <h2>커피 머신의 비밀</h2>
+                      {field("숨겨진 대사", ["easterEgg"], draft.easterEgg)}
+                    </article>
+                  )}
+                </>
+              ))}
             {selected === "shared" && (
               <>
                 <article className="ed-card">
@@ -461,73 +575,77 @@ export default function Editor() {
                 {field("마지막 사랑 편지", ["letter"], draft.letter)}
               </article>
             )}
-          </section>
-          <aside className="ed-preview">
-            <div className="ed-preview-heading">
-              <span>실시간 글 미리보기</span>
-              <i>● 바로 반영 중</i>
-            </div>
-            <div className="ed-preview-canvas">
-              {selected === "letter" ? (
-                <div className="ed-letter">
-                  <span>♡</span>
-                  <h2>{names(draft.ui.text36)}</h2>
-                  <p>{names(draft.letter)}</p>
-                </div>
-              ) : stage ? (
-                <>
-                  <div className="ed-preview-title">
-                    <small>{names(stage.subtitle)}</small>
-                    <h2>{names(stage.name)}</h2>
-                  </div>
-                  <div className="ed-preview-scene">
+          </fieldset>
+          {!photoMode && (
+            <aside className="ed-preview">
+              <div className="ed-preview-heading">
+                <span>실시간 글 미리보기</span>
+                <i>● 바로 반영 중</i>
+              </div>
+              <div className="ed-preview-canvas">
+                {selected === "letter" ? (
+                  <div className="ed-letter">
                     <span>♡</span>
-                    <p>{names(stage.intro.join("\n"))}</p>
+                    <h2>{names(draft.ui.text36)}</h2>
+                    <p>{names(draft.letter)}</p>
                   </div>
-                  <div className="ed-speech">
-                    <small>{names(preview?.label ?? "우리의 이야기")}</small>
-                    {preview?.lines.map((line, i) => (
-                      <p key={i}>{names(line)}</p>
-                    ))}
-                    {stage.choices.map((choice, i) => (
-                      <div key={i} className="ed-preview-choice">
-                        <b>{names(choice.text)}</b>
-                        <p>{names(choice.reply)}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="ed-polaroid">
-                    <div>
-                      ♡<small>기존 사진은 그대로</small>
+                ) : stage ? (
+                  <>
+                    <div className="ed-preview-title">
+                      <small>{names(stage.subtitle)}</small>
+                      <h2>{names(stage.name)}</h2>
                     </div>
-                    <h3>{names(stage.memory.title)}</h3>
-                    <p>{names(stage.memory.caption)}</p>
+                    <div className="ed-preview-scene">
+                      <span>♡</span>
+                      <p>{names(stage.intro.join("\n"))}</p>
+                    </div>
+                    <div className="ed-speech">
+                      <small>{names(preview?.label ?? "우리의 이야기")}</small>
+                      {preview?.lines.map((line, i) => (
+                        <p key={i}>{names(line)}</p>
+                      ))}
+                      {stage.choices.map((choice, i) => (
+                        <div key={i} className="ed-preview-choice">
+                          <b>{names(choice.text)}</b>
+                          <p>{names(choice.reply)}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="ed-polaroid">
+                      <div>
+                        ♡<small>기존 사진은 그대로</small>
+                      </div>
+                      <h3>{names(stage.memory.title)}</h3>
+                      <p>{names(stage.memory.caption)}</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="ed-shared-preview">
+                    <span>♡</span>
+                    <h2>{names(draft.ui.text13)}</h2>
+                    <p>
+                      {names(focus || "왼쪽 문구를 눌러 미리보기 해보세요.")}
+                    </p>
                   </div>
-                </>
-              ) : (
-                <div className="ed-shared-preview">
-                  <span>♡</span>
-                  <h2>{names(draft.ui.text13)}</h2>
-                  <p>{names(focus || "왼쪽 문구를 눌러 미리보기 해보세요.")}</p>
+                )}
+              </div>
+              {focus && selected !== "letter" && (
+                <div className="ed-focused-preview">
+                  <small>지금 고치는 문장</small>
+                  <p>{names(focus)}</p>
                 </div>
               )}
-            </div>
-            {focus && selected !== "letter" && (
-              <div className="ed-focused-preview">
-                <small>지금 고치는 문장</small>
-                <p>{names(focus)}</p>
-              </div>
-            )}
-            <p className="ed-preview-note">
-              문구를 확인하는 미리보기예요.
-              <br />
-              실제 3D 장면·캐릭터·저장 기록은 건드리지 않아요.
-            </p>
-          </aside>
+              <p className="ed-preview-note">
+                문구를 확인하는 미리보기예요.
+                <br />
+                실제 3D 장면·캐릭터·저장 기록은 건드리지 않아요.
+              </p>
+            </aside>
+          )}
         </div>
         <footer className="ed-footer">
-          저장 = 이 브라우저의 초안 · 내보내기 = 여섯 장소를 담은 JSON · 게시 =
-          Codex에 파일을 전달한 뒤 별도로 요청
+          저장 = 이 브라우저의 초안 · 사진 포함 = ZIP 내보내기 · 게시 = Codex에
+          파일을 전달한 뒤 별도로 요청
         </footer>
       </div>
       {dialog && (
@@ -541,9 +659,9 @@ export default function Editor() {
             <span>↺</span>
             <h2 id="reset-heading">현재 게임 문구로 되돌릴까요?</h2>
             <p>
-              여섯 장소와 편집 중인 문구가 모두 초기화돼요. 게임 플레이 기록과
-              공개 게임은 그대로예요. 저장된 초안은 다시 저장하기 전까지 남아
-              있어요.
+              여섯 장소의 편집 중인 문구와 사진 목록이 모두 초기화돼요. 게임
+              플레이 기록과 공개 게임은 그대로예요. 저장된 초안은 다시 저장하기
+              전까지 남아 있어요.
             </p>
             <button onClick={() => setDialog(null)}>계속 편집하기</button>
             <button

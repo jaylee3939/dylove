@@ -38,6 +38,8 @@ npm test
 
 ## Replace the photos
 
+Use the **추억 사진 관리** section of the [private visual editor](EDITOR.ko.md): upload multiple JPG/PNG/WebP photos, reorder/replace/delete, edit each title/caption, and export one ZIP with every story edit and optimized image. Send that ZIP to Codex for a reviewed update to the existing Vercel game. Photos stay in browser IndexedDB until you export/publish; the editor makes no upload requests. Legacy JSON drafts remain supported. The steps below are an optional developer workflow.
+
 No personal photos were supplied; the game intentionally shows empty Korean Polaroid frames. Add JPEG/WebP images to `public/memories/`, then edit **only** `src/data/memories.ts`:
 
 ```ts

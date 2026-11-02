@@ -493,51 +493,6 @@ h1 > span {
   top: -20px;
   right: -10px;
 }
-.polaroid {
-  background: #fffaf2;
-  padding: 14px 14px 23px;
-  box-shadow: 0 15px 50px #34211840;
-  transform: rotate(-3deg);
-  margin-bottom: 30px;
-}
-.polaroid img {
-  width: 100%;
-  height: 280px;
-  object-fit: cover;
-}
-.empty-photo {
-  height: 260px;
-  background: linear-gradient(135deg, #e6c6b6, #edddd0);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #ac8276;
-  border: 1px solid #d7bcaa;
-}
-.empty-photo > span {
-  font-size: 55px;
-  font-family: "Pretendard Variable", sans-serif;
-}
-.empty-photo p {
-  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
-  font-size: 19px;
-  line-height: 1.7;
-  margin: 8px;
-}
-.empty-photo small {
-  font-size: 9px;
-  letter-spacing: 3px;
-}
-.polaroid h2 {
-  font-family: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  margin: 20px 0 8px;
-}
-.polaroid p {
-  font-size: 10px;
-}
 .photo-modal > .eyebrow {
   color: #fff1de;
   font-size: 10px;
@@ -741,12 +696,6 @@ h1 > span {
   .letter-body {
     font-size: 14px;
   }
-  .polaroid img {
-    height: 240px;
-  }
-  .empty-photo {
-    height: 240px;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -811,5 +760,5 @@ h1 > span {
 /* Story copy can contain intentional line breaks from the content editor. */
 .typed{white-space:pre-wrap}
 /* Keep the editor's deliberate newlines in published dialogue and photo copy. */
-.polaroid h2,.polaroid p,.choices button,.hud h2,.stage-sub,.objective,.title-screen .subtitle{white-space:pre-wrap}
+.choices button,.hud h2,.stage-sub,.objective,.title-screen .subtitle{white-space:pre-wrap}
 .world-sign,.bubble,.spot-label{white-space:pre}

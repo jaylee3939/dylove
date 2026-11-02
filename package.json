@@ -12,11 +12,13 @@
     "test:browser": "node tests/browser.mjs && node tests/touch.mjs && node tests/album.mjs",
     "editor": "vite --mode editor --host 127.0.0.1 --port 5174 --strictPort",
     "content:apply": "node scripts/apply-content.mjs",
-    "test:editor": "node tests/editor.mjs"
+    "test:editor": "node tests/editor.mjs",
+    "test:photos": "node tests/photos.mjs && node tests/game-photos.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.0",
     "@react-three/fiber": "^9.3.0",
+    "fflate": "^0.8.3",
     "pretendard": "^1.3.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

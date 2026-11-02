@@ -71,4 +71,5 @@ export const defaultUI = {
   text69: "잠깐 쉬어 가요 ☕",
   text70: "우리 둘만의 밤 ♡",
   text71: "도연이만 입장 가능 ♡",
+  text72: "둘만의 사진 보기 ♡",
 };

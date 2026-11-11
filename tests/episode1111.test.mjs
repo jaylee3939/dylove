@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { isSpecial1111Path } from "../src/routes.ts";
@@ -43,7 +44,16 @@ test("independent exact routes and all six chapters are playable contracts", () 
   assert.equal(episode.chapters[1].quiz[0].correctChoiceId, "one");
   assert.equal(episode.chapters[2].quiz[0].correctChoiceId, "yeop");
   assert.equal(episode.chapters[2].quiz[1].correctChoiceId, "meditation");
-  assert.equal(episode.chapters[5].letter, specialLetter);
+  const published = JSON.parse(
+    readFileSync(
+      new URL("../src/episodes/1111/published.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  assert.equal(
+    episode.chapters[5].letter,
+    published?.chapters[5].letter ?? specialLetter,
+  );
   assert.ok(specialLetter.endsWith("사랑해. ❤️"));
 });
 test("dialogue and quiz gates cannot be skipped; wrong answers do not unlock stages", () => {

@@ -458,6 +458,9 @@ export default function Episode() {
                     </section>
                   ) : (
                     <>
+                      {chapter.kind !== "quiz" && chapter.photos.length > 0 && (
+                        <Gallery key={chapter.id} photos={chapter.photos} />
+                      )}
                       {chapter.kind === "prologue" && (
                         <section className="eleven-note">
                           <h3>우리의 시간이 시작돼</h3>

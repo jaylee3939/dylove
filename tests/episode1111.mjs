@@ -1,11 +1,7 @@
 import { chromium, expect as baseExpect } from "@playwright/test";
 import slim from "@sparticuz/chromium";
 import assert from "node:assert/strict";
-import {
-  episode,
-  specialLetter,
-  EPISODE_SAVE_KEY,
-} from "../src/episodes/1111/content.ts";
+import { episode, EPISODE_SAVE_KEY } from "../src/episodes/1111/content.ts";
 import {
   heartPositions,
   EXPLORE_SAVE_KEY,
@@ -89,6 +85,45 @@ try {
         .getByRole("button", { name: "대사 눌러 다음으로", exact: true })
         .tap();
   }
+  async function photos(chapter) {
+    const config = episode.chapters[chapter];
+    if (config.background) {
+      assert.ok(
+        (
+          await page
+            .locator(".eleven-app")
+            .evaluate((element) => getComputedStyle(element).backgroundImage)
+        ).includes(config.background),
+      );
+      assert.equal(
+        await page.evaluate(async (src) => {
+          const image = new Image();
+          image.src = src;
+          await image.decode();
+          return image.naturalWidth > 0;
+        }, config.background),
+        true,
+      );
+    }
+    for (let i = 0; i < config.photos.length; i++) {
+      const current = config.photos[i],
+        gallery = page.getByRole("region", {
+          name: "스페셜 추억 사진",
+          exact: true,
+        });
+      await expect(gallery.locator("img")).toHaveAttribute("src", current.src);
+      await expect(gallery.locator("h2")).toHaveText(current.title);
+      await expect(gallery.locator(".polaroid p")).toHaveText(current.caption);
+      await gallery.locator("img").evaluate(async (image) => {
+        await image.decode();
+        if (!image.naturalWidth) throw Error("Photo decode failed");
+      });
+      if (i < config.photos.length - 1)
+        await gallery
+          .getByRole("button", { name: "다음 사진 →", exact: true })
+          .tap();
+    }
+  }
   const close = () =>
     page
       .getByRole("button", { name: "공간으로 돌아가기 ♡", exact: true })
@@ -116,10 +151,12 @@ try {
   assert.ok((await pos()).z < 4.5);
   await page.locator(".explore-interact").tap();
   await lines(0);
+  await photos(0);
   await advance();
   console.log("PASS mobile joystick and prologue");
   await mission(0, -2);
   await lines(1);
+  await photos(1);
   await page.getByRole("button", { name: "3일", exact: true }).tap();
   await expect(page.locator(".eleven-feedback")).toBeVisible();
   await page.getByRole("button", { name: "하루", exact: true }).tap();
@@ -127,6 +164,7 @@ try {
   console.log("PASS Busan mission and quiz");
   await mission(-2.7, -1.5);
   await lines(2);
+  await photos(2);
   await page.getByRole("button", { name: "샐러드", exact: true }).tap();
   await page.getByRole("button", { name: "엽떡", exact: true }).tap();
   await close();
@@ -136,6 +174,7 @@ try {
   console.log("PASS both memory object missions");
   await mission(0, 3);
   await lines(3);
+  await photos(3);
   await close();
   for (let i = 0; i < heartPositions.length; i++) {
     await walk(...heartPositions[i]);
@@ -165,6 +204,7 @@ try {
   await advance();
   await mission(-2, 0);
   await lines(4);
+  await photos(4);
   const choice = episode.chapters[4].choices[0];
   await page.getByRole("button", { name: new RegExp("^" + choice.text) }).tap();
   await page
@@ -172,11 +212,12 @@ try {
     .tap();
   await mission(2, -2.5);
   await lines(5);
+  await photos(5);
   await page.locator(".eleven-envelope").tap();
   assert.equal(
     (await page.locator(".eleven-love-letter p").allTextContents())
       .join("\n")
-      .replace(/\u00a0/g, "") === specialLetter,
+      .replace(/\u00a0/g, "") === episode.chapters[5].letter,
     true,
   );
   await page
@@ -230,7 +271,7 @@ try {
   );
   assert.deepEqual(errors, []);
   console.log(
-    "PASS: real mobile joystick, keyboard traversal of four maps, proximity-only mission events, quiz retries, 11 spatial hearts with reload, hug/kiss, date and letter discovery, ending, preserved main/editor saves.",
+    "PASS: real mobile joystick, keyboard traversal of four maps, proximity-only mission events, quiz retries, 11 spatial hearts with reload, hug/kiss, all configured photos/backgrounds, exact edited letter, date and letter discovery, ending, preserved main/editor saves.",
   );
 } catch (error) {
   const pages = browser.contexts().flatMap((c) => c.pages());

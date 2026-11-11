@@ -1,3 +1,4 @@
+import { publishSpecial, checkDeployment, snapshotSpecial } from "./publishing";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { defaultEpisode } from "../episodes/1111/defaults";
@@ -10,7 +11,13 @@ export function privateEditor(enabled: boolean): Plugin {
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         const pathname = req.url?.split("?")[0];
-        if (pathname === "/__special/apply") {
+        if (
+          [
+            "/__special/apply",
+            "/__special/publish",
+            "/__special/publish/status",
+          ].includes(pathname ?? "")
+        ) {
           const host = req.headers.host ?? "";
           const address = req.socket.remoteAddress;
           if (
@@ -36,8 +43,25 @@ export function privateEditor(enabled: boolean): Plugin {
                 if (Buffer.byteLength(raw) > 40 * 1024 * 1024)
                   throw Error("사진 묶음이 너무 커요.");
               }
-              const body = JSON.parse(raw),
-                content = validateSpecial(body.content, defaultEpisode);
+              const body = JSON.parse(raw);
+              if (pathname === "/__special/publish") {
+                if (!/^[a-f0-9]{64}$/.test(body.expectedDigest ?? ""))
+                  throw Error("먼저 현재 수정본을 반영해 주세요.");
+                const result = await publishSpecial({
+                  source: server.config.root,
+                  expectedDigest: body.expectedDigest,
+                });
+                res.setHeader("Content-Type", "application/json");
+                res.end(JSON.stringify(result));
+                return;
+              }
+              if (pathname === "/__special/publish/status") {
+                const result = await checkDeployment(body.digest);
+                res.setHeader("Content-Type", "application/json");
+                res.end(JSON.stringify(result));
+                return;
+              }
+              const content = validateSpecial(body.content, defaultEpisode);
               const allowed = new Set(
                 content.chapters.flatMap((c) =>
                   [...c.photos.map((p) => p.src), c.background].filter(Boolean),
@@ -103,7 +127,8 @@ export function privateEditor(enabled: boolean): Plugin {
               );
               await fs.rename(target + ".tmp", target);
               res.setHeader("Content-Type", "application/json");
-              res.end('{"ok":true}');
+              const { digest } = await snapshotSpecial(server.config.root);
+              res.end(JSON.stringify({ ok: true, digest }));
             } catch (e) {
               res.statusCode = 400;
               res.setHeader("Content-Type", "application/json");

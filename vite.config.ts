@@ -1,8 +1,9 @@
 import { defineConfig } from "vite";
+import { publicationManifest } from "./src/editor/publicationManifest";
 import react from "@vitejs/plugin-react";
 import { privateEditor } from "./src/editor/devPlugin";
 export default defineConfig(({ mode }) => ({
-  plugins: [react(), privateEditor(mode === "editor")],
+  plugins: [react(), privateEditor(mode === "editor"), publicationManifest()],
   ...(mode === "editor"
     ? {
         server: {

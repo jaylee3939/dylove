@@ -13,7 +13,8 @@
     "editor": "vite --mode editor --host 127.0.0.1 --port 5174 --strictPort",
     "content:apply": "node scripts/apply-content.mjs",
     "test:editor": "node tests/editor.mjs",
-    "test:photos": "node tests/photos.mjs && node tests/game-photos.mjs"
+    "test:photos": "node tests/photos.mjs && node tests/game-photos.mjs",
+    "special:publish": "node scripts/publish-special.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.0",

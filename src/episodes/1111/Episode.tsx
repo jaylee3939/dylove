@@ -348,7 +348,7 @@ export default function Episode() {
             <section className="eleven-story" ref={panel}>
               <p className="eleven-eyebrow">{episode.tagline}</p>
               <h1 aria-label={episode.title}>
-                <span>LOVE YOU, DOYEON</span>
+                <span>{episode.title.replace(/\s*:\s*11:11\s*$/, "")}</span>
                 <strong>
                   11<span>:</span>11<em>♡</em>
                 </strong>

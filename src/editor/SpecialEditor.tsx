@@ -9,6 +9,20 @@ import { optimizePhoto } from "./photos/optimize";
 import { getAsset, putAssets } from "./photos/storage";
 import { zipSync, strToU8, unzipSync, strFromU8 } from "fflate";
 const KEY = "doyeon-special-editor-v1";
+const PUBLIC_URL = "https://dylove-wheat.vercel.app/special/1111";
+const PUBLICATION_KEY = "doyeon-special-last-publication-v1";
+type Publication = { commit: string; digest: string; state: string };
+async function localPost(path: string, body: unknown) {
+  const response = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Local-Editor": "1111" },
+    body: JSON.stringify(body),
+  });
+  const result = await response.json();
+  if (!response.ok) throw Error(result.error || "처리하지 못했어요.");
+  return result;
+}
+
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
 function ImagePreview({ path }: { path: string }) {
   const [url, setURL] = useState(path);
@@ -49,9 +63,21 @@ export default function SpecialEditor({ onBack }: { onBack: () => void }) {
   const [saved, setSaved] = useState(JSON.stringify(draft)),
     [index, setIndex] = useState(0),
     [message, setMessage] = useState(
-      "저장은 이 브라우저의 초안입니다. 파일 반영 후 GitHub 게시가 필요해요.",
+      "초안은 이 브라우저에 보관돼요. 공개 반영은 GitHub·Vercel에 게시 ♡ 버튼 한 번이면 돼요.",
     ),
     [busy, setBusy] = useState(false);
+  const [publication, setPublication] = useState<Publication | null>(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem(PUBLICATION_KEY) || "null");
+      return /^[a-f0-9]{64}$/.test(v?.digest) &&
+        /^[a-f0-9]{40}$/.test(v?.commit)
+        ? v
+        : null;
+    } catch {
+      return null;
+    }
+  });
+  const [deployment, setDeployment] = useState("");
   const chapter = draft.chapters[index],
     dirty = JSON.stringify(draft) !== saved;
   useEffect(() => {
@@ -172,41 +198,82 @@ export default function SpecialEditor({ onBack }: { onBack: () => void }) {
       );
     });
   }
+  async function applyToFiles() {
+    const checked = validateSpecial(draft, defaultEpisode);
+    const images: Record<string, string> = {};
+    for (const path of new Set(
+      checked.chapters.flatMap((c) =>
+        [...c.photos.map((p) => p.src), c.background].filter(
+          (v): v is string => !!v,
+        ),
+      ),
+    )) {
+      const a = await getAsset(path);
+      if (a) {
+        images[path] = await new Promise<string>((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => resolve(String(r.result).split(",")[1]);
+          r.onerror = reject;
+          r.readAsDataURL(a.blob);
+        });
+      }
+    }
+    return await localPost("/__special/apply", { content: checked, images });
+  }
   async function apply() {
     await run(async () => {
-      const checked = validateSpecial(draft, defaultEpisode);
-      const images: Record<string, string> = {};
-      for (const path of new Set(
-        checked.chapters.flatMap((c) =>
-          [...c.photos.map((p) => p.src), c.background].filter(
-            (v): v is string => !!v,
-          ),
-        ),
-      )) {
-        const a = await getAsset(path);
-        if (a) {
-          images[path] = await new Promise<string>((resolve, reject) => {
-            const r = new FileReader();
-            r.onload = () => resolve(String(r.result).split(",")[1]);
-            r.onerror = reject;
-            r.readAsDataURL(a.blob);
-          });
-        }
-      }
-      const response = await fetch("/__special/apply", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Local-Editor": "1111",
-        },
-        body: JSON.stringify({ content: checked, images }),
-      });
-      const result = await response.json();
-      if (!response.ok) throw Error(result.error || "반영 실패");
+      await applyToFiles();
       save();
       setMessage(
         "로컬 프로젝트 파일에 반영했어요! 스페셜 미리보기에서 확인하세요. 공개 반영은 GitHub 커밋·푸시 후에만 이루어져요.",
       );
+    });
+  }
+  async function verifyDeployment(value: Publication, wait = false) {
+    for (let i = 0; i < (wait ? 24 : 1); i++) {
+      const result = await localPost("/__special/publish/status", {
+        digest: value.digest,
+      });
+      if (result.verified) {
+        setDeployment(
+          "✓ 실제 Vercel 게임에서 마지막 게시본과 같은 대사·사진 버전을 확인했어요.",
+        );
+        return;
+      }
+      if (result.state === "unreachable") {
+        setDeployment(
+          "GitHub 반영은 완료됐지만 공개 서버에 접속하지 못해 배포 성공은 아직 확인하지 못했어요. 잠시 후 배포 반영 확인을 눌러 주세요.",
+        );
+        return;
+      }
+      setDeployment("GitHub 반영 완료 · Vercel 배포 대기 중…");
+      if (wait && i < 23)
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+    setDeployment(
+      "GitHub 반영 완료 · Vercel은 아직 같은 버전이 아니에요. 잠시 후 배포 반영 확인을 눌러 주세요.",
+    );
+  }
+  async function publish() {
+    await run(async () => {
+      setDeployment("");
+      setMessage("현재 수정본과 사진을 준비하고 있어요…");
+      const applied = await applyToFiles();
+      save();
+      setMessage(
+        "GitHub 복제 폴더를 찾아 스페셜만 빌드·커밋·푸시하고 있어요. 잠시 기다려 주세요.",
+      );
+      const result = await localPost("/__special/publish", {
+        expectedDigest: applied.digest,
+      });
+      setPublication(result);
+      try {
+        localStorage.setItem(PUBLICATION_KEY, JSON.stringify(result));
+      } catch {}
+      setMessage(
+        `GitHub 반영 완료 ♡ 커밋 ${result.commit.slice(0, 8)} · 기존 Vercel 주소에서 배포를 확인할게요.`,
+      );
+      await verifyDeployment(result, true);
     });
   }
   async function importZIP(file: File) {
@@ -303,8 +370,40 @@ export default function SpecialEditor({ onBack }: { onBack: () => void }) {
         <p role="status">
           {dirty ? "● 저장하지 않은 변경" : "✓ 저장된 초안"} · {message}
         </p>
+        <p>
+          게시 버튼은 현재 수정본과 사진을 GitHub main에 올립니다. 인증은 맥북의
+          Git에서만 사용하며, 다른 작업 파일과 스테이징은 유지해요.
+        </p>
+        {publication && (
+          <section aria-label="마지막 게시 결과">
+            <p>마지막 게시 커밋: {publication.commit.slice(0, 8)}</p>
+            <p role="note">
+              {deployment ||
+                "배포 반영 확인을 눌러 마지막 게시 버전을 확인해 주세요."}
+            </p>
+            <button
+              disabled={busy}
+              onClick={() => void run(() => verifyDeployment(publication))}
+            >
+              배포 반영 확인
+            </button>{" "}
+            <a href={PUBLIC_URL} target="_blank" rel="noreferrer">
+              공개 스페셜 열기 ↗
+            </a>
+          </section>
+        )}
         <fieldset disabled={busy} style={{ border: 0, padding: 0 }}>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <button
+              onClick={() => void publish()}
+              style={{
+                background: "#8e4058",
+                color: "#fff4e8",
+                fontWeight: 700,
+              }}
+            >
+              GitHub·Vercel에 게시 ♡
+            </button>
             <button onClick={() => void run(save)}>초안 저장</button>
             <button onClick={() => void apply()}>로컬 게임 파일에 반영</button>
             <button onClick={() => void exportZIP()}>

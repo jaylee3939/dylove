@@ -93,3 +93,7 @@ The existing local editor now includes **11:11 SPECIAL**. Save a private browser
 ### 11:11 exploration upgrade and latest ZIP
 
 The special episode now uses four walkable 3D maps, the original characters and joystick, a following camera, proximity missions, and eleven spatial heart collectibles. Existing story/editor/save documents remain compatible. Read [Mac ZIP/start instructions](DOWNLOAD-AND-START.ko.md) before starting a downloaded copy: stop the old server so port 5174 serves the new **11:11 SPECIAL** editor.
+
+### One-click special publishing
+
+The private SPECIAL editor now has **GitHub·Vercel에 게시 ♡**: save the current draft/photos, publish only special content through an isolated Git worktree, and verify the live deployment by its content-and-image digest. Credentials stay in the local Git credential helper. Unrelated Desktop edits/index and main game data are preserved. ZIP users can publish their edited folder with one command from the cloned repository. See [simple Korean publishing instructions](PUBLISH-SPECIAL.ko.md).

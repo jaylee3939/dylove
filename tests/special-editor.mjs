@@ -90,6 +90,14 @@ try {
   const game = await browser.newPage();
   await game.goto("http://127.0.0.1:5173/special/1111");
   await game.getByRole("button", { name: "11:11에 만나러 가기 ♡" }).click();
+  game.setDefaultTimeout(120000);
+  await game.waitForFunction(
+    () => !!localStorage.getItem("doyeon-special-exploration-v1"),
+  );
+  await game.keyboard.down("w");
+  await game.locator(".explore-interact:not(:disabled)").waitFor();
+  await game.keyboard.up("w");
+  await game.keyboard.press("e");
   await expect(game.locator(".eleven-dialog")).toContainText("테스트 대사 ♡");
   const forbidden = await page.request.post(
     "http://127.0.0.1:5174/__special/apply",

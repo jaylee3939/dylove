@@ -40,7 +40,7 @@ function Couple({ action }: { action: Action }) {
     </>
   );
 }
-function Sea() {
+export function Sea() {
   const water = useRef<THREE.Mesh>(null);
   const geo = useMemo(() => new THREE.PlaneGeometry(16, 12, 28, 20), []);
   useFrame(({ clock }) => {
@@ -92,7 +92,7 @@ function Sea() {
     </>
   );
 }
-function PinkGarden({ garden }: { garden: boolean }) {
+export function PinkGarden({ garden }: { garden: boolean }) {
   return (
     <>
       {[-1, 1].map((side) => (
@@ -142,7 +142,7 @@ function PinkGarden({ garden }: { garden: boolean }) {
     </>
   );
 }
-function Room() {
+export function Room() {
   return (
     <>
       <Box p={[0, 1.3, -2.1]} s={[5, 2.6, 0.14]} c="#753f56" />

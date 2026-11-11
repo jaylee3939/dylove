@@ -89,3 +89,7 @@ All character/environment shapes and audio in this repository are procedural ori
 ### Special episode editing
 
 The existing local editor now includes **11:11 SPECIAL**. Save a private browser draft, apply it to local project files to preview, and explicitly commit/push to publish through the existing Vercel integration. It supports quiz answers, dialogue, date choices, letters, optimized photos/backgrounds, publication visibility, and photo-inclusive ZIP import/export. See [Korean instructions](SPECIAL-1111.ko.md#최종-3단계--로컬-관리자-연결). The editor is never published as a public route.
+
+### 11:11 exploration upgrade and latest ZIP
+
+The special episode now uses four walkable 3D maps, the original characters and joystick, a following camera, proximity missions, and eleven spatial heart collectibles. Existing story/editor/save documents remain compatible. Read [Mac ZIP/start instructions](DOWNLOAD-AND-START.ko.md) before starting a downloaded copy: stop the old server so port 5174 serves the new **11:11 SPECIAL** editor.

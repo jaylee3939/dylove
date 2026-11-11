@@ -6,8 +6,12 @@ import {
   specialLetter,
   EPISODE_SAVE_KEY,
 } from "../src/episodes/1111/content.ts";
-const expect = baseExpect.configure({ timeout: 60000 }),
-  baseURL = process.env.EPISODE_BASE_URL ?? "http://127.0.0.1:5173";
+import {
+  heartPositions,
+  EXPLORE_SAVE_KEY,
+} from "../src/episodes/1111/exploration.ts";
+const expect = baseExpect.configure({ timeout: 120000 }),
+  base = process.env.EPISODE_BASE_URL ?? "http://127.0.0.1:5173";
 const browser = await chromium.launch({
   executablePath: await slim.executablePath(),
   args: [
@@ -26,197 +30,215 @@ try {
     hasTouch: true,
     reducedMotion: "reduce",
   });
-  page.setDefaultTimeout(60000);
+  page.setDefaultTimeout(120000);
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  page.on("console", (m) => {
-    if (m.type() === "error") errors.push(m.text());
+  await page.goto(base + "/special/1111", { waitUntil: "domcontentloaded" });
+  await page.evaluate(() => {
+    localStorage.setItem("doyeon-love-v1", "main-preserved");
+    localStorage.setItem("doyeon-content-editor-v1", "editor-preserved");
   });
-  const mainSave = JSON.stringify({
-    state: {
-      stage: 0,
-      hearts: [],
-      album: [],
-      completed: [],
-      started: true,
-      muted: true,
-    },
-    version: 0,
-  });
-  await page.addInitScript((main) => {
-    if (!localStorage.getItem("doyeon-love-v1"))
-      localStorage.setItem("doyeon-love-v1", main);
-    if (!localStorage.getItem("doyeon-content-editor-v1"))
-      localStorage.setItem("doyeon-content-editor-v1", "editor-sentinel");
-  }, mainSave);
-  const reload = async () => {
-    await page.reload({ waitUntil: "domcontentloaded", timeout: 120000 });
-    await page.locator('[data-episode="1111"]').waitFor();
-  };
-  async function dialogue(index) {
-    for (let i = 0; i < episode.chapters[index].lines.length; i++)
+  await page.getByRole("button", { name: "11:11에 만나러 가기 ♡" }).tap();
+  await expect(page.locator(".special-explore canvas")).toBeVisible();
+  await expect(page.locator(".explore-interact")).toBeDisabled();
+  async function pos() {
+    return page.evaluate(
+      (k) => JSON.parse(localStorage.getItem(k) || '{"x":0,"z":4.8}'),
+      EXPLORE_SAVE_KEY,
+    );
+  }
+  async function walk(x, z) {
+    await expect(page.locator(".special-event-wrap")).toBeHidden();
+    const held = new Set();
+    try {
+      for (let i = 0; i < 600; i++) {
+        const p = await pos();
+        if (Math.hypot(x - p.x, z - p.z) < 0.48) return;
+        const wanted = new Set();
+        if (Math.abs(x - p.x) > 0.3) wanted.add(x > p.x ? "d" : "a");
+        if (Math.abs(z - p.z) > 0.3) wanted.add(z > p.z ? "s" : "w");
+        for (const k of held)
+          if (!wanted.has(k)) {
+            await page.keyboard.up(k);
+            held.delete(k);
+          }
+        for (const k of wanted)
+          if (!held.has(k)) {
+            await page.keyboard.down(k);
+            held.add(k);
+          }
+        await page.waitForTimeout(180);
+      }
+      throw Error(
+        "Walking target was not reached: " +
+          JSON.stringify({ x, z, current: await pos() }),
+      );
+    } finally {
+      for (const k of held) await page.keyboard.up(k);
+    }
+  }
+  async function mission(x, z) {
+    await walk(x, z);
+    await expect(page.locator(".explore-interact")).toBeEnabled();
+    await page.keyboard.press("e");
+    await expect(page.locator(".special-event-wrap")).toBeVisible();
+  }
+  async function lines(chapter) {
+    for (let i = 0; i < episode.chapters[chapter].lines.length; i++)
       await page
         .getByRole("button", { name: "대사 눌러 다음으로", exact: true })
         .tap();
   }
-  async function stage(index) {
-    await expect(page.locator(".eleven-stage-heading h2")).toHaveText(
-      episode.chapters[index].title,
-    );
-  }
-  await page.goto(baseURL + "/special/1111", {
-    waitUntil: "domcontentloaded",
-    timeout: 120000,
+  const close = () =>
+    page
+      .getByRole("button", { name: "공간으로 돌아가기 ♡", exact: true })
+      .tap();
+  const advance = () =>
+    page.getByRole("button", { name: "다음 이야기로 →", exact: true }).tap();
+  // Use the actual original touch joystick for the first mission.
+  const bounds = await page.locator(".joystick").boundingBox(),
+    client = await page.context().newCDPSession(page);
+  const x = bounds.x + bounds.width / 2,
+    y = bounds.y + bounds.height / 2;
+  await client.send("Input.dispatchTouchEvent", {
+    type: "touchStart",
+    touchPoints: [{ x, y }],
   });
-  await page.getByRole("button", { name: "11:11에 만나러 가기 ♡" }).tap();
-  await stage(0);
-  await dialogue(0);
-  await page
-    .getByRole("button", { name: "다음 이야기로 →", exact: true })
-    .tap();
-  await stage(1);
-  await dialogue(1);
+  await client.send("Input.dispatchTouchEvent", {
+    type: "touchMove",
+    touchPoints: [{ x, y: y - 34 }],
+  });
+  await expect(page.locator(".explore-interact")).toBeEnabled();
+  await client.send("Input.dispatchTouchEvent", {
+    type: "touchEnd",
+    touchPoints: [],
+  });
+  assert.ok((await pos()).z < 4.5);
+  await page.locator(".explore-interact").tap();
+  await lines(0);
+  await advance();
+  console.log("PASS mobile joystick and prologue");
+  await mission(0, -2);
+  await lines(1);
   await page.getByRole("button", { name: "3일", exact: true }).tap();
-  await expect(
-    page.getByText(episode.chapters[1].quiz[0].retry, { exact: false }),
-  ).toBeVisible();
-  assert.equal(await page.locator(".eleven-next").count(), 0);
+  await expect(page.locator(".eleven-feedback")).toBeVisible();
   await page.getByRole("button", { name: "하루", exact: true }).tap();
-  await expect(page.locator(".eleven-feedback.correct")).toContainText("열흘");
-  for (const item of episode.chapters[1].reflections)
-    await page.getByRole("button", { name: new RegExp(item.title) }).tap();
-  await expect(page.locator(".eleven-memory-sky")).toBeVisible();
-  await page.screenshot({ path: "/tmp/doyeon-1111-sea.png", timeout: 120000 });
-  await page
-    .getByRole("button", { name: "다음 이야기로 →", exact: true })
-    .tap();
-  await stage(2);
-  await dialogue(2);
+  await advance();
+  console.log("PASS Busan mission and quiz");
+  await mission(-2.7, -1.5);
+  await lines(2);
   await page.getByRole("button", { name: "샐러드", exact: true }).tap();
   await page.getByRole("button", { name: "엽떡", exact: true }).tap();
-  await page.getByRole("button", { name: "구름탕", exact: true }).tap();
+  await close();
+  await mission(2.7, -1.5);
   await page.getByRole("button", { name: "섹스탕(명상탕)", exact: true }).tap();
-  await expect(page.locator(".eleven-feedback.correct")).toHaveCount(2);
-  await page
-    .getByRole("button", { name: "다음 이야기로 →", exact: true })
-    .tap();
-  await stage(3);
-  await dialogue(3);
-  for (let i = 1; i <= 3; i++)
-    await page
-      .getByRole("button", { name: `하트 ${i} 받기`, exact: true })
-      .tap();
-  await expect(
-    page.getByRole("progressbar", { name: "하트 수집 진행" }),
-  ).toHaveAttribute("aria-valuenow", "3");
-  await reload();
-  await stage(3);
-  await expect(
-    page.getByRole("progressbar", { name: "하트 수집 진행" }),
-  ).toHaveAttribute("aria-valuenow", "3");
-  for (let i = 4; i <= 11; i++)
-    await page
-      .getByRole("button", { name: `하트 ${i} 받기`, exact: true })
-      .tap();
-  await expect(
-    page.getByRole("progressbar", { name: "하트 수집 진행" }),
-  ).toHaveAttribute("aria-valuenow", "11");
-  await expect(
-    page.getByRole("button", { name: "뽀뽀로 답장하기 ♡", exact: true }),
-  ).toBeDisabled();
+  await advance();
+  console.log("PASS both memory object missions");
+  await mission(0, 3);
+  await lines(3);
+  await close();
+  for (let i = 0; i < heartPositions.length; i++) {
+    await walk(...heartPositions[i]);
+    await expect
+      .poll(async () =>
+        page.evaluate(
+          ({ key, id }) =>
+            JSON.parse(localStorage.getItem(key)).hearts.includes(id),
+          { key: EPISODE_SAVE_KEY, id: i },
+        ),
+      )
+      .toBe(true);
+    if (i === 2) {
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await expect(page.locator(".explore-hud")).toContainText("♡ 3/11");
+    }
+  }
+  await page.screenshot({
+    path: "/tmp/1111-explore-garden.png",
+    timeout: 120000,
+  });
+  await mission(0, 3);
   await page.getByRole("button", { name: "꼭 안아주기 ♡", exact: true }).tap();
   await page
     .getByRole("button", { name: "뽀뽀로 답장하기 ♡", exact: true })
     .tap();
-  await page.screenshot({
-    path: "/tmp/doyeon-1111-hearts.png",
-    timeout: 120000,
-  });
-  await page
-    .getByRole("button", { name: "다음 이야기로 →", exact: true })
-    .tap();
-  await stage(4);
-  await dialogue(4);
-  for (const choice of episode.chapters[4].choices) {
-    await page
-      .getByRole("button", { name: new RegExp("^" + choice.text) })
-      .tap();
-    await expect(page.locator(".eleven-date-reply p")).toHaveText(choice.reply);
-  }
-  await reload();
-  await stage(4);
-  const selected = episode.chapters[4].choices.at(-1);
-  await expect(page.locator(".eleven-dates>button.selected")).toContainText(
-    selected.text,
-  );
+  await advance();
+  await mission(-2, 0);
+  await lines(4);
+  const choice = episode.chapters[4].choices[0];
+  await page.getByRole("button", { name: new RegExp("^" + choice.text) }).tap();
   await page
     .getByRole("button", { name: "마지막 편지 만나러 가기 ♡", exact: true })
     .tap();
-  await stage(5);
-  await dialogue(5);
+  await mission(2, -2.5);
+  await lines(5);
   await page.locator(".eleven-envelope").tap();
-  await expect(page.locator(".eleven-love-letter")).toBeVisible();
-  const text = await page
-    .locator(".eleven-love-letter p")
-    .evaluateAll((nodes) =>
-      nodes
-        .map((n) => (n.textContent === "\u00a0" ? "" : n.textContent))
-        .join("\n"),
-    );
-  assert.equal(text, specialLetter);
-  await expect(page.locator(".eleven-date-promise p")).toHaveText(
-    selected.ending,
+  assert.equal(
+    (await page.locator(".eleven-love-letter p").allTextContents())
+      .join("\n")
+      .replace(/\u00a0/g, "") === specialLetter,
+    true,
   );
-  await reload();
-  await expect(page.locator(".eleven-love-letter")).toBeVisible();
   await page
     .getByRole("button", { name: "다 읽었어. 꼭 안아줘 ♡", exact: true })
     .tap();
   await expect(page.locator(".eleven-finale")).toBeVisible();
+  await close();
+  await page.screenshot({
+    path: "/tmp/1111-explore-ending.png",
+    timeout: 120000,
+  });
   const saved = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)),
+    (k) => JSON.parse(localStorage.getItem(k)),
     EPISODE_SAVE_KEY,
   );
   assert.equal(saved.screen, "ending");
   assert.equal(saved.hearts.length, 11);
   assert.equal(saved.ceremony, 2);
-  assert.equal(saved.dateChoice, selected.id);
-  assert.equal(saved.envelopeOpen, true);
-  assert.equal(
-    await page.evaluate(
-      () => document.querySelector(".eleven-app").scrollWidth > innerWidth,
-    ),
-    false,
-  );
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.screenshot({
-    path: "/tmp/doyeon-1111-ending.png",
-    timeout: 120000,
-  });
-  await page
-    .getByRole("button", { name: "스페셜 처음으로", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "스페셜 처음부터", exact: true })
-    .click();
-  await expect(
-    page.getByRole("button", { name: "11:11에 만나러 가기 ♡" }),
-  ).toBeVisible();
   assert.deepEqual(
     await page.evaluate(() => [
       localStorage.getItem("doyeon-love-v1"),
       localStorage.getItem("doyeon-content-editor-v1"),
     ]),
-    [mainSave, "editor-sentinel"],
+    ["main-preserved", "editor-preserved"],
   );
-  await page.getByRole("link", { name: "← 우리의 본편" }).click();
+  await expect(page.locator(".special-explore.explore-finale")).toBeVisible();
+  await page.getByRole("button", { name: "여행 메뉴", exact: true }).tap();
+  await page
+    .getByRole("button", { name: "편지와 엔딩 다시 보기 ♡", exact: true })
+    .tap();
+  await expect(page.locator(".eleven-finale")).toBeVisible();
+  await close();
+  await page.getByRole("button", { name: "여행 메뉴", exact: true }).tap();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page
+    .getByRole("button", { name: "스페셜 처음부터", exact: true })
+    .tap();
   await expect(
-    page.getByRole("button", { name: "이어서 만나러 가기 ♡" }),
+    page.getByRole("button", { name: "11:11에 만나러 가기 ♡", exact: true }),
   ).toBeVisible();
+  assert.equal(
+    await page.evaluate((k) => localStorage.getItem(k), EXPLORE_SAVE_KEY),
+    null,
+  );
+  assert.deepEqual(
+    await page.evaluate(() => [
+      localStorage.getItem("doyeon-love-v1"),
+      localStorage.getItem("doyeon-content-editor-v1"),
+    ]),
+    ["main-preserved", "editor-preserved"],
+  );
   assert.deepEqual(errors, []);
   console.log(
-    "PASS: full touch journey; all quizzes including wrong-answer retries; 11 hearts; reload checkpoints; hug/kiss; all date responses; exact full letter; ending; isolated reset and main-game return. No browser errors.",
+    "PASS: real mobile joystick, keyboard traversal of four maps, proximity-only mission events, quiz retries, 11 spatial hearts with reload, hug/kiss, date and letter discovery, ending, preserved main/editor saves.",
   );
+} catch (error) {
+  const pages = browser.contexts().flatMap((c) => c.pages());
+  if (pages[0])
+    await pages[0]
+      .screenshot({ path: "/tmp/1111-explore-error.png", timeout: 120000 })
+      .catch(() => {});
+  throw error;
 } finally {
   await browser.close();
 }

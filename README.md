@@ -6,6 +6,10 @@ A personal, fully local 3D story adventure built with React, TypeScript, Vite, R
 
 See [the Korean editor guide](EDITOR.ko.md). Run `npm run editor` locally to edit all six stages, common UI text, character names, captions, and the letter without TypeScript. Draft saves are separate from game progress. Export a complete JSON and send it to Codex for an intentional content update. The editor is excluded from production; existing Vercel hosting and URLs remain unchanged.
 
+## 11.11 standalone special episode
+
+Open `/special/1111` for the independent six-chapter special: prologue, Busan and taste quizzes, 11-heart touch game, four date choices, and the full letter/couple ending. Main game stays at `/`; saves are isolated. See [the Korean special guide](SPECIAL-1111.ko.md). Optional photos may be added in the dedicated event data; the existing local editor is preserved and its special-event panel is a later integration.
+
 ## Run
 
 Requires Node.js 22.18+ (tested with Node 24) and npm.

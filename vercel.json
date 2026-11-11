@@ -12,5 +12,15 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/special/1111",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/special/1111/",
+      "destination": "/index.html"
+    }
   ]
 }

@@ -1,1 +1,322 @@
 null
+{
+  "version": 2,
+  "id": "1111",
+  "title": "LOVE YOU, DOYEON : 11:11",
+  "subtitle": "10 DAYS FEEL LIKE ONE",
+  "tagline": "빼빼로 대신 선물하는 사랑 게임",
+  "intro": "오늘의 선물은, 너와 나의 시간.\n조금 더 가까이 와줄래?",
+  "coverMemory": {
+    "stageId": "garden",
+    "photoIndex": 0
+  },
+  "chapters": [
+    {
+      "id": "prologue",
+      "kind": "prologue",
+      "title": "나 빼빼로 안 좋아한다?",
+      "description": "빼빼로보다 더 생각나게 해주고 싶어",
+      "scene": "room",
+      "photos": [],
+      "quiz": [],
+      "lines": [
+        {
+          "speaker": "jaeyeong",
+          "text": "빼빼로 사지 말랬지? 그래서 안 샀어. 근데 선물하지 말란 말은 안 했잖아? ㅎㅎ"
+        },
+        {
+          "speaker": "doyeon",
+          "text": "뭐야 ㅎㅎ 그래서 뭘 준비했는데?"
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "너랑 함께했던 순간들을 모아서, 우리 둘만의 작은 게임을 만들었어."
+        },
+        {
+          "speaker": "doyeon",
+          "text": "그럼 오늘 선물은 내가 직접 열어보는 거네? ♡"
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "응. 부산의 밤바다부터, 아직 오지 않은 우리 데이트까지."
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "틀려도 괜찮고, 천천히 와도 괜찮아. 마지막에는 내가 널 꼭 안아줄 거야."
+        },
+        {
+          "speaker": "doyeon",
+          "text": "좋아. 그럼 내 손 잡고 시작해 ♡"
+        }
+      ]
+    },
+    {
+      "id": "busan",
+      "kind": "quiz",
+      "title": "부산에서 멈춘 시간",
+      "description": "하루가 너무 짧았던 이유.",
+      "scene": "sea",
+      "photos": [],
+      "lines": [
+        {
+          "speaker": "jaeyeong",
+          "text": "잠깐, 파도 소리 들리는 것 같지? 오늘은 이 바다 앞에서 우리 시간을 다시 꺼내보자."
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "부산에 함께 다녀온 그날. 짧은 여행이었는데, 마음에는 오래 남았어."
+        },
+        {
+          "speaker": "doyeon",
+          "text": "짧아서 더 아쉬웠던 거 아닐까?"
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "맞아. 그래도 길이보다 중요한 건 옆에 누가 있느냐였던 것 같아."
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "네가 아파서 걱정도 됐지만, 같이 있는 그 시간이 나는 참 좋았어."
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "다음에는 더 편하게, 더 여유롭게. 네 속도에 맞춰서 함께 걷고 싶어."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "busan-days",
+          "question": "우리 부산 여행은 며칠이었게?",
+          "choices": [
+            {
+              "id": "one",
+              "text": "하루"
+            },
+            {
+              "id": "three",
+              "text": "3일"
+            },
+            {
+              "id": "ten",
+              "text": "10일"
+            }
+          ],
+          "correctChoiceId": "one",
+          "correct": "하루였지만 너무 행복했어. 근데 너랑 열흘을 있어도 하루처럼 느껴질 것 같아.",
+          "retry": "그만큼 오래 있고 싶었다는 뜻이지? ㅎㅎ 우리 실제 여행 길이를 다시 떠올려 봐 ♡"
+        }
+      ],
+      "reflections": [
+        {
+          "title": "그날의 마음",
+          "text": "네가 아프면 내 마음도 쓰여. 다음 여행에서는 더 든든하게 챙겨주고 싶어."
+        },
+        {
+          "title": "함께한 풍경",
+          "text": "같은 바다를 봐도 네가 옆에 있으면 다른 기억이 돼. 그게 참 신기해."
+        },
+        {
+          "title": "다음의 약속",
+          "text": "다음에는 조금 더 여유롭게, 쉬어가면서 같이 걷자. 네 손은 내가 잡을게."
+        }
+      ]
+    },
+    {
+      "id": "dates",
+      "kind": "quiz",
+      "title": "도연이 취향 업데이트",
+      "description": "우리끼리만 아는 취향 사전.",
+      "scene": "pink",
+      "photos": [],
+      "lines": [
+        {
+          "speaker": "jaeyeong",
+          "text": "이번엔 도연이 취향에 관한 문제야. 정답을 맞히면 내 마음도 같이 받아줘."
+        },
+        {
+          "speaker": "doyeon",
+          "text": "취향 업데이트라니 ㅋㅋ 나를 얼마나 잘 아는데?"
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "조금씩 더 알아가는 중. 맛있는 걸 같이 먹고, 별것 아닌 일에도 같이 웃으면서."
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "특히 이 두 가지는 생각만 해도 아직 웃음이 나 ㅎㅎ"
+        }
+      ],
+      "quiz": [
+        {
+          "id": "favorite-food",
+          "question": "도연이가 나 때문에 빠져버린 음식은?",
+          "choices": [
+            {
+              "id": "yeop",
+              "text": "엽떡"
+            },
+            {
+              "id": "ramen",
+              "text": "라멘"
+            },
+            {
+              "id": "salad",
+              "text": "샐러드"
+            }
+          ],
+          "correctChoiceId": "yeop",
+          "correct": "정답, 엽떡! 이제 맛있는 거 먹을 때마다 네 생각이 나 ㅎㅎ ♡",
+          "retry": "그것도 다음에 같이 먹자! 그런데 나 때문에 빠져버린 매콤한 그 음식은 뭐였지? ㅎㅎ"
+        },
+        {
+          "id": "legendary-bath",
+          "question": "우리의 전설적인 탕 이름은?",
+          "choices": [
+            {
+              "id": "meditation",
+              "text": "섹스탕(명상탕)"
+            },
+            {
+              "id": "moon",
+              "text": "달빛탕"
+            },
+            {
+              "id": "cloud",
+              "text": "구름탕"
+            }
+          ],
+          "correctChoiceId": "meditation",
+          "correct": "우리의 전설적인 명상탕 ㅋㅋ 그 장난까지 전부 소중한 기억이야 ♡",
+          "retry": "새로운 탕 이름을 만든 거야? ㅋㅋ 우리 둘이 장난치던 그 이름을 다시 골라봐 ♡"
+        }
+      ]
+    },
+    {
+      "id": "eleven-hearts",
+      "kind": "collect",
+      "title": "심장 쿵쾅 미니게임",
+      "description": "열한 번 눌러서 전하는 마음.",
+      "scene": "pink",
+      "photos": [],
+      "quiz": [],
+      "targetHearts": 11,
+      "lines": [
+        {
+          "speaker": "jaeyeong",
+          "text": "시간이 지날수록 익숙해지는 게 아니라, 네가 더 좋아져."
+        },
+        {
+          "speaker": "doyeon",
+          "text": "그래서 심장이 그렇게 쿵쾅대는 거야? ♡"
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "응. 여기 흩어진 내 마음을 하나씩 받아줄래?"
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "하트를 눌러서 11개만 모아줘. 놓쳐도 사라지지 않으니까, 천천히 해도 돼."
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "다 모으면… 말 대신 먼저 안아줄게."
+        }
+      ]
+    },
+    {
+      "id": "next-date",
+      "kind": "date",
+      "title": "앞으로의 우리",
+      "description": "다음 장면도, 너와 함께.",
+      "scene": "garden",
+      "photos": [],
+      "quiz": [],
+      "lines": [
+        {
+          "speaker": "jaeyeong",
+          "text": "지금까지 함께한 시간도 좋았지만, 앞으로의 우리도 기대돼."
+        },
+        {
+          "speaker": "doyeon",
+          "text": "그럼 다음엔 뭐 하고 싶은데?"
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "어디든 좋아. 네가 같이 있다는 게 제일 중요하니까."
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "오늘은 도연이가 골라줘. 이 약속을 마지막 편지에도 살짝 남겨둘게."
+        }
+      ],
+      "choices": [
+        {
+          "id": "travel",
+          "text": "또 여행 가기",
+          "reply": "좋아. 다음에는 조금 더 오래, 네 속도에 맞춰 함께 여행하자. 내 옆자리도, 내 손도 네 거야 ♡",
+          "ending": "우리 다음 약속은 또 한 번의 여행. 다음 풍경에도 꼭 네가 함께였으면 좋겠어.",
+          "action": "hands"
+        },
+        {
+          "id": "food",
+          "text": "맛있는 거 먹으러 가기",
+          "reply": "우리 맛있는 건 다 나눠 먹자. 네가 맛있게 먹고 웃는 얼굴까지, 내가 제일 좋아하는 메뉴야 ♡",
+          "ending": "우리 다음 약속은 맛있는 한 끼. 네가 웃으면 평범한 식사도 특별해져.",
+          "action": "wave"
+        },
+        {
+          "id": "home",
+          "text": "집에서 꼭 붙어 있기",
+          "reply": "그럼 오늘은 조금 더 가까이 와. 아무것도 안 해도 괜찮아. 내가 오래 안아줄게 ♡",
+          "ending": "우리 다음 약속은 집에서 꼭 붙어 있기. 아무 계획 없는 하루에도 네 옆이고 싶어.",
+          "action": "hug"
+        },
+        {
+          "id": "hobby",
+          "text": "새로운 취미 같이 시작하기",
+          "reply": "처음이라 서툴러도 같이 웃으면 되지. 우리 함께 처음 해보는 것들을 하나씩 늘려가자 ♡",
+          "ending": "우리 다음 약속은 새로운 취미. 서툰 첫날까지도 함께라면 소중한 추억이 될 거야.",
+          "action": "hands"
+        }
+      ]
+    },
+    {
+      "id": "letter",
+      "kind": "letter",
+      "title": "11:11, 너에게",
+      "description": "빼빼로는 없지만, 내 사랑은 무제한.",
+      "scene": "room",
+      "photos": [],
+      "quiz": [],
+      "letter": "도연아.\n\n오늘은 빼빼로데이인데, 빼빼로는 주지 말라고 했잖아.\n그래서 먹는 선물 대신 내 마음을 조금 더 담아봤어.\n\n우리 부산 여행 다녀온 거 있지.\n하루밖에 안 되는 짧은 여행이었고, 네가 아파서 마음도 쓰였지만 나는 정말 행복했어.\n\n부산이라서 행복했던 게 아니라 그냥 너랑 함께여서 행복했던 것 같아.\n\n너랑 있으면 시간이 이상하게 빨리 가.\n하루를 같이 있어도 너무 짧고, 열흘을 같이 있어도 하루처럼 느껴질 것 같아.\n\n그리고 시간이 지날수록 익숙해지는 게 아니라 네가 더 좋아지고, 심장이 더 쿵쾅대.\n\n앞으로는 너랑 더 많은 곳에 가고 싶어.\n새로운 것도 같이 시작해 보고, 별것 아닌 일에도 같이 웃고, 네가 힘든 날에는 더 든든하게 옆에 있어주고 싶어.\n\n너를 더 지켜주고 싶고, 더 아껴주고 싶고, 더 소중하다고 말해주고 싶어.\n\n우리 명상탕에서 장난치던 것도, 나 때문에 엽떡에 빠진 것도 생각하면 아직도 웃겨.\n그런 사소한 순간들까지 전부 소중해.\n\n도연아, 앞으로도 나랑 시간 빨리 가는 연애 계속하자.\n\n빼빼로는 없지만, 내 사랑은 무제한이야.\n\n사랑해. ❤️",
+      "lines": [
+        {
+          "speaker": "jaeyeong",
+          "text": "네가 모아준 열한 개의 마음, 전부 이 편지에 담았어."
+        },
+        {
+          "speaker": "jaeyeong",
+          "text": "바쁘게 넘기지 않아도 돼. 네가 편한 속도로 읽어줘."
+        },
+        {
+          "speaker": "doyeon",
+          "text": "응. 이번에는 네 마음, 오래 간직할게 ♡"
+        }
+      ]
+    }
+  ],
+  "reactions": [
+    {
+      "id": "hug",
+      "label": "안아주기 ♡",
+      "action": "hug",
+      "text": "빼빼로보다 달콤한 건, 네 품이야."
+    },
+    {
+      "id": "kiss",
+      "label": "살짝 뽀뽀 ♡",
+      "action": "kiss",
+      "text": "오늘은 평소보다 한 번 더. 쪽 ♡"
+    }
+  ]
+}

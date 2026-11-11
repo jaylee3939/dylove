@@ -1,3 +1,4 @@
+import { episode as specialEpisode } from "./episodes/1111/content";
 import { ui, characters } from "./content/gameContent";
 import Typewriter from "./components/Typewriter";
 import Photo from "./components/Photo";
@@ -220,6 +221,25 @@ export default function App() {
         />
       </WorldBoundary>
       <div className="grain" />
+      {specialEpisode.enabled !== false && !playing && (
+        <a
+          href="/special/1111"
+          style={{
+            position: "fixed",
+            right: 18,
+            top: "max(18px, env(safe-area-inset-top))",
+            zIndex: 60,
+            color: "#8e4058",
+            background: "#fff4e8ed",
+            padding: "12px 18px",
+            borderRadius: 30,
+            textDecoration: "none",
+            fontSize: 13,
+          }}
+        >
+          11:11 SECRET ♡
+        </a>
+      )}
       <div className="stage-transition" key={`transition-${game.stage}`} />
       {!playing ? (
         <div className="title-screen">

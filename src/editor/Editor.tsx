@@ -1,3 +1,4 @@
+import SpecialEditor from "./SpecialEditor";
 import PhotoManager from "./photos/PhotoManager";
 import { exportPhotoBundle, importPhotoBundle } from "./photos/bundles";
 import { useEffect, useRef, useState } from "react";
@@ -64,6 +65,7 @@ export default function Editor() {
     [search, setSearch] = useState(""),
     [photoMode, setPhotoMode] = useState(false),
     [busy, setBusy] = useState(false);
+  const [specialMode, setSpecialMode] = useState(false);
   const file = useRef<HTMLInputElement>(null);
   const dirty = JSON.stringify(draft) !== saved;
   useEffect(() => {
@@ -198,6 +200,8 @@ export default function Editor() {
   const stage = typeof selected === "number" ? draft.stages[selected] : null;
   const preview = stage?.spots[Math.min(previewSpot, stage.spots.length - 1)];
   const names = (text: string) => resolveNames(text, draft.characters);
+  if (specialMode)
+    return <SpecialEditor onBack={() => setSpecialMode(false)} />;
   return (
     <main className="ed-app">
       <aside className="ed-sidebar">
@@ -207,6 +211,9 @@ export default function Editor() {
             우리의 이야기<small>도연이를 위한 작은 작업실</small>
           </span>
         </a>
+        <button className="ed-extra" onClick={() => setSpecialMode(true)}>
+          ♡ 11:11 SPECIAL
+        </button>
         <div className="ed-local">● 내 컴퓨터 전용</div>
         <p className="ed-nav-label">여섯 번의 만남</p>
         <nav aria-label="장소 선택">

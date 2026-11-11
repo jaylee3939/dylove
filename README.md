@@ -85,3 +85,7 @@ For new locations, extend the stage/memory data and provide its environment artw
 ## Asset and license notes
 
 All character/environment shapes and audio in this repository are procedural original work. No generated personal photographs are used. Pretendard Variable is bundled through pretendard (SIL Open Font License); no runtime font CDN is required. Three.js and npm dependencies retain their upstream licenses. A private personal gift may still be publicly reachable if deployed without hosting access protection.
+
+### Special episode editing
+
+The existing local editor now includes **11:11 SPECIAL**. Save a private browser draft, apply it to local project files to preview, and explicitly commit/push to publish through the existing Vercel integration. It supports quiz answers, dialogue, date choices, letters, optimized photos/backgrounds, publication visibility, and photo-inclusive ZIP import/export. See [Korean instructions](SPECIAL-1111.ko.md#최종-3단계--로컬-관리자-연결). The editor is never published as a public route.

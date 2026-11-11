@@ -168,12 +168,29 @@ export default function Episode() {
     setAction("idle");
   }
   const ready = chapterReady(progress);
+  if (episode.enabled === false)
+    return (
+      <main className="eleven-app">
+        <h1>아직 준비 중인 선물이에요 ♡</h1>
+        <a href="/">우리의 본편으로 돌아가기</a>
+      </main>
+    );
   return (
     <main
       className={
         "eleven-app " +
         (progress.screen !== "title" ? "eleven-playing " : "") +
         (progress.screen === "ending" ? "eleven-ended" : "")
+      }
+      style={
+        chapter.background
+          ? {
+              backgroundImage: `linear-gradient(#221529b8,#221529ed), url("${chapter.background}")`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundAttachment: "fixed",
+            }
+          : undefined
       }
       data-episode="1111"
     >
